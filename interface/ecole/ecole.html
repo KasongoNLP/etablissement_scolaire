@@ -1,0 +1,4606 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>School Finance</title>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+
+
+<style>
+
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Segoe UI",sans-serif;
+}
+
+
+body{
+
+background:#f8fafc;
+color:#334155;
+
+}
+
+
+/* ================= SIDEBAR ================= */
+
+
+.sidebar{
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:260px;
+
+height:100vh;
+
+background:#111827;
+
+color:white;
+
+}
+
+
+.logo{
+
+height:80px;
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+padding:0 25px;
+
+font-size:22px;
+
+font-weight:bold;
+
+border-bottom:1px solid #374151;
+
+}
+
+
+.logo i{
+
+color:#38bdf8;
+
+}
+
+
+.menu{
+
+margin-top:20px;
+
+}
+
+
+
+.menu a{
+
+display:flex;
+
+align-items:center;
+
+gap:18px;
+
+padding:15px 25px;
+
+color:#cbd5e1;
+
+text-decoration:none;
+
+font-size:15px;
+
+}
+
+
+.menu a:hover,
+.menu .active{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+
+
+.menu i{
+
+width:20px;
+
+}
+
+
+
+
+
+/* ================= HEADER ================= */
+
+
+.header{
+
+
+position:fixed;
+
+left:260px;
+
+right:0;
+
+top:0;
+
+height:80px;
+
+background:white;
+
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+
+padding:0 35px;
+
+
+box-shadow:0 2px 10px #ddd;
+
+
+}
+
+
+.header h2{
+
+font-size:22px;
+
+}
+
+
+
+.user{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+}
+
+
+
+.avatar{
+
+height:45px;
+
+width:45px;
+
+border-radius:50%;
+
+background:#2563eb;
+
+color:white;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-weight:bold;
+
+}
+
+
+
+
+
+/* ================= CONTENT ================= */
+
+
+.content{
+
+
+margin-left:260px;
+
+padding:110px 35px 40px;
+
+
+}
+
+
+
+
+
+.topbar{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:30px;
+
+}
+
+
+
+.search{
+
+width:300px;
+
+height:42px;
+
+border:none;
+
+border-radius:10px;
+
+background:white;
+
+padding:0 15px;
+
+box-shadow:0 2px 8px #ddd;
+
+}
+
+
+
+
+/* ================= CARDS ================= */
+
+
+.cards{
+
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:25px;
+
+
+}
+
+
+
+.card{
+
+
+background:white;
+
+padding:25px;
+
+border-radius:18px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.05);
+
+
+}
+
+
+
+.card-title{
+
+display:flex;
+
+justify-content:space-between;
+
+color:#64748b;
+
+
+}
+
+
+
+.card i{
+
+font-size:30px;
+
+color:#2563eb;
+
+}
+
+
+.value{
+
+font-size:35px;
+
+font-weight:bold;
+
+margin-top:15px;
+
+}
+
+
+
+
+/* ================= SECTION ================= */
+
+
+
+.section{
+
+margin-top:30px;
+
+display:grid;
+
+grid-template-columns:2fr 1fr;
+
+gap:25px;
+
+}
+
+
+
+.box{
+background:white;
+border-radius:18px;
+padding:25px;
+box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+
+
+.chart{
+height:320px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:25px;
+color:#94a3b8;
+}
+
+
+
+
+/* ================= TABLE ================= */
+
+
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+
+
+th{
+background:#2563eb;
+color:white;
+padding:15px;
+text-align:left;
+}
+
+
+td{
+padding:15px;
+border-bottom:1px solid #e5e7eb;
+}
+
+
+
+.status{
+padding:5px 12px;
+border-radius:20px;
+background:#dcfce7;
+color:#16a34a;
+font-size:13px;
+}
+
+
+
+
+
+/* RESPONSIVE */
+
+
+@media(max-width:900px){
+
+
+.cards{
+grid-template-columns:1fr 1fr;
+}
+
+
+.section{
+grid-template-columns:1fr;
+}
+
+
+.sidebar{
+width:80px;
+}
+
+
+.header{
+
+left:80px;
+
+}
+
+
+.content{
+
+margin-left:80px;
+
+}
+
+
+.menu span,
+.logo span{
+
+display:none;
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================= */
+/* PAGE ELEVES */
+/* ============================= */
+
+#pageEleves{
+    width:100%;
+}
+
+
+
+/* Barre titre */
+#pageEleves .title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+
+}
+
+
+#pageEleves .title h1{
+    font-size:28px;
+    color:#1f2937;
+
+}
+
+
+
+/* Bouton nouvel élève */
+
+#btnNouvelEleve{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    font-size:15px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+
+#btnNouvelEleve:hover{
+    background:#1d4ed8;
+}
+
+
+
+/* ============================= */
+/* BOITE PRINCIPALE */
+/* ============================= */
+
+
+#pageEleves .box{
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+
+
+
+/* ============================= */
+/* MODAL */
+/* ============================= */
+
+
+#modalNouvelEleve{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.45);
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+}
+
+
+
+/* contenu modal */
+
+#modalNouvelEleve .modal-contenu{
+    background:white;
+    width:600px;
+    padding:30px;
+    border-radius:15px;
+    position:relative;
+    animation:ouvrirModal .3s ease;
+}
+
+
+
+/* Animation */
+@keyframes ouvrirModal{
+    from{
+        transform:translateY(-30px);
+        opacity:0;
+    }
+    to{
+        transform:translateY(0);
+        opacity:1;
+    }
+}
+
+
+
+/* bouton fermer */
+#btnFermerModalEleve{
+    position:absolute;
+    top:15px;
+    right:15px;
+    width:35px;
+    height:35px;
+    border:none;
+    border-radius:50%;
+    background:#ef4444;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+
+}
+
+
+
+
+#btnFermerModalEleve:hover{
+    background:#dc2626;
+}
+
+
+
+
+/* ============================= */
+/* FORMULAIRE ELEVE */
+/* ============================= */
+
+
+.form-ligne{
+    display:flex;
+    gap:20px;
+    margin-bottom:15px;
+}
+
+
+
+.form-groupe{
+    flex:1;
+}
+
+
+
+.form-groupe label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:600;
+}
+
+
+
+.form-groupe input,
+.form-groupe select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    outline:none;
+}
+
+
+
+.form-groupe input:focus,
+.form-groupe select:focus{
+    border-color:#2563eb;
+}
+
+
+
+/* Boutons */
+.zone-boutons{
+    display:flex;
+    justify-content:flex-end;
+    gap:15px;
+    margin-top:25px;
+}
+
+
+
+.btn-annuler{
+    background:#e5e7eb;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+}
+.btn-enregistrer{
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+}
+.btn-enregistrer:hover{
+    background:#15803d;
+}
+
+
+
+
+
+
+
+
+
+/* =====================================
+   PAGE PARENTS
+===================================== */
+
+
+.parent-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+
+}
+
+
+.parent-header h1{
+
+    font-size:28px;
+    color:#1e293b;
+
+}
+
+
+
+.parent-btn-ajouter{
+
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+
+}
+
+
+.parent-btn-ajouter:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+
+
+
+/* =====================================
+   BOITE LISTE PARENTS
+===================================== */
+
+
+.parent-box{
+
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+
+}
+
+
+
+.parent-box h2{
+
+    margin-bottom:20px;
+    color:#334155;
+
+}
+
+
+
+
+
+/* =====================================
+   TABLEAU
+===================================== */
+
+
+.parent-table{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+
+
+.parent-table th{
+
+    background:#f1f5f9;
+    padding:14px;
+    text-align:left;
+    color:#475569;
+    font-size:14px;
+
+}
+
+
+
+.parent-table td{
+
+    padding:14px;
+    border-bottom:1px solid #e2e8f0;
+
+}
+
+
+
+.parent-table tr:hover{
+
+    background:#f8fafc;
+
+}
+
+
+
+
+
+
+
+/* =====================================
+   MODAL PARENT
+===================================== */
+
+
+.parent-modal{
+
+    display:none;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.45);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:1000;
+
+}
+
+
+
+
+
+
+.parent-modal-contenu{
+
+    background:white;
+
+    width:500px;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    animation:apparitionParent .3s ease;
+
+}
+
+
+
+
+
+
+@keyframes apparitionParent{
+
+    from{
+
+        transform:translateY(-30px);
+
+        opacity:0;
+
+    }
+
+
+    to{
+
+        transform:translateY(0);
+
+        opacity:1;
+
+    }
+
+}
+
+
+
+
+
+
+
+/* =====================================
+   HEADER MODAL
+===================================== */
+
+
+.parent-modal-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.parent-modal-header h2{
+
+    margin:0;
+
+    color:#1e293b;
+
+}
+
+
+
+
+.parent-btn-fermer{
+
+    border:none;
+
+    background:none;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    color:#64748b;
+
+}
+
+
+
+.parent-btn-fermer:hover{
+
+    color:#ef4444;
+
+}
+
+
+
+
+
+
+/* =====================================
+   FORMULAIRE
+===================================== */
+
+
+.parent-form{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+
+
+
+.parent-groupe{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+.parent-groupe label{
+
+    margin-bottom:7px;
+
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+
+
+.parent-groupe input{
+
+    padding:12px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:8px;
+
+    outline:none;
+
+    font-size:14px;
+
+}
+
+
+
+.parent-groupe input:focus{
+
+    border-color:#2563eb;
+
+}
+
+
+
+
+
+/* =====================================
+   BOUTONS
+===================================== */
+
+
+.parent-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:15px;
+
+    margin-top:25px;
+
+}
+
+
+
+
+.parent-btn-annuler{
+
+    background:#e2e8f0;
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}
+
+
+
+
+.parent-btn-enregistrer{
+
+    background:#16a34a;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}
+
+
+
+.parent-btn-enregistrer:hover{
+
+    background:#15803d;
+
+}
+
+
+
+
+
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+
+@media(max-width:700px){
+    .parent-form{
+        grid-template-columns:1fr;
+    }
+    .parent-modal-contenu{
+        width:90%;
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================
+   PAGE PAIEMENTS
+===================================== */
+
+
+.paiements-entete{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+
+}
+
+
+.paiements-entete h1{
+
+    color:#1e293b;
+
+}
+
+
+
+
+.paiements-bouton-ajouter{
+
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+
+}
+
+
+
+.paiements-bouton-ajouter:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+
+
+
+/* =====================================
+   BOITE TABLEAU
+===================================== */
+
+
+.paiements-boite{
+
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+
+}
+
+
+
+.paiements-boite h2{
+
+    margin-bottom:20px;
+
+}
+
+
+
+
+.paiements-tableau{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+
+
+.paiements-tableau th{
+
+    background:#f1f5f9;
+    padding:14px;
+    text-align:left;
+
+}
+
+
+
+.paiements-tableau td{
+
+    padding:14px;
+    border-bottom:1px solid #e2e8f0;
+
+}
+
+
+
+
+.paiements-tableau tr:hover{
+
+    background:#f8fafc;
+
+}
+
+
+
+
+
+/* =====================================
+   MODAL
+===================================== */
+
+
+.paiements-modal{
+
+    display:none;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.45);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:1000;
+
+}
+
+
+
+
+
+.paiements-modal-contenu{
+
+    background:white;
+
+    width:500px;
+
+    padding:25px;
+
+    border-radius:15px;
+
+}
+
+
+
+
+
+.paiements-modal-entete{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+
+
+
+.paiements-bouton-fermer{
+
+    border:none;
+
+    background:none;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+/* =====================================
+   FORMULAIRE
+===================================== */
+
+
+.paiements-formulaire{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+
+
+
+
+.paiements-groupe{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+.paiements-groupe label{
+
+    margin-bottom:7px;
+
+    font-weight:600;
+
+}
+
+
+
+.paiements-groupe input,
+.paiements-groupe select{
+
+    padding:12px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:8px;
+
+}
+
+
+
+
+
+/* =====================================
+   BOUTONS BAS
+===================================== */
+
+
+.paiements-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:15px;
+
+    margin-top:25px;
+
+}
+
+
+
+.paiements-bouton-annuler{
+
+    background:#e2e8f0;
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}
+
+
+
+.paiements-bouton-enregistrer{
+
+    background:#16a34a;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}
+
+
+
+.paiements-bouton-enregistrer:hover{
+
+    background:#15803d;
+
+}
+
+
+
+
+
+@media(max-width:700px){
+
+
+    .paiements-formulaire{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+
+    .paiements-modal-contenu{
+
+        width:90%;
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===============================
+   PAGE REÇUS
+================================ */
+
+
+.recus-entete{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+
+}
+
+
+
+.recus-bouton-ajouter{
+
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+
+}
+
+
+.recus-bouton-ajouter:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+
+
+
+/* CONTENEUR TABLE */
+
+.recus-conteneur{
+
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+
+
+.tableau-recus{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+
+.tableau-recus th{
+
+    background:#f1f5f9;
+    padding:12px;
+    text-align:left;
+
+}
+
+
+.tableau-recus td{
+
+    padding:12px;
+    border-bottom:1px solid #ddd;
+
+}
+
+
+
+
+
+
+
+
+/* ===============================
+        MODAL
+================================ */
+
+
+.recus-modal{
+
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.5);
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+
+}
+
+
+
+
+
+.recus-modal-contenu{
+
+    background:white;
+    width:500px;
+    padding:25px;
+    border-radius:12px;
+
+}
+
+
+
+
+
+
+
+.recus-modal-entete{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+
+}
+
+
+
+
+.recus-bouton-fermer{
+
+    border:none;
+    background:none;
+    font-size:25px;
+    cursor:pointer;
+
+}
+
+
+
+
+
+
+
+
+/* FORMULAIRE */
+
+
+.recus-formulaire{
+
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+
+}
+
+
+
+
+.recus-groupe{
+
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+
+}
+
+
+
+.recus-groupe label{
+
+    font-weight:bold;
+
+}
+
+
+
+.recus-groupe input,
+.recus-groupe select{
+
+
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+
+}
+
+
+
+
+
+
+
+/* ACTIONS */
+
+
+.recus-actions{
+
+    display:flex;
+    justify-content:flex-end;
+    gap:15px;
+    margin-top:25px;
+
+}
+
+
+
+
+.recus-annuler{
+
+    background:#e5e7eb;
+    border:none;
+    padding:10px 20px;
+    border-radius:6px;
+    cursor:pointer;
+
+}
+
+
+
+
+
+.recus-enregistrer{
+
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:6px;
+    cursor:pointer;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================
+   PAGE CLASSES
+===================================== */
+
+
+#pageClasses .title{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+
+}
+
+
+
+#pageClasses .title h1{
+
+    font-size:28px;
+    color:#1e293b;
+
+}
+
+
+
+#btnNouvelleClasse{
+
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+
+}
+
+
+#btnNouvelleClasse:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+
+
+
+
+/* =====================================
+   TABLEAU CLASSES
+===================================== */
+
+
+#pageClasses .box{
+
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+
+}
+
+
+
+#pageClasses table{
+
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+
+}
+
+
+
+#pageClasses th{
+
+    background:#f1f5f9;
+    padding:14px;
+    text-align:left;
+    font-weight:600;
+
+}
+
+
+
+#pageClasses td{
+
+    padding:13px;
+    border-bottom:1px solid #e5e7eb;
+
+}
+
+
+
+#pageClasses tr:hover{
+
+    background:#f8fafc;
+
+}
+
+
+
+
+
+
+
+/* =====================================
+   MODAL CLASSE
+===================================== */
+
+
+.modal-classe{
+
+    display:none;
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.5);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:1000;
+
+}
+
+
+
+
+
+.modal-classe-contenu{
+
+    background:white;
+
+    width:500px;
+
+    padding:25px;
+
+    border-radius:12px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+
+}
+
+
+
+
+
+/* ENTETE MODAL */
+
+
+.modal-classe-entete{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.modal-classe-entete h2{
+
+    margin:0;
+
+    color:#1e293b;
+
+}
+
+
+
+
+#btnFermerModalClasse{
+
+    background:none;
+
+    border:none;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    color:#64748b;
+
+}
+
+
+
+
+#btnFermerModalClasse:hover{
+
+    color:#ef4444;
+
+}
+
+
+
+
+
+
+
+
+/* =====================================
+   FORMULAIRE CLASSE
+===================================== */
+
+
+.formulaire-classe{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+
+
+
+
+.groupe-classe{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:7px;
+
+}
+
+
+
+
+.groupe-classe label{
+
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+
+
+
+
+.groupe-classe input,
+.groupe-classe select{
+
+
+    padding:12px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:8px;
+
+    outline:none;
+
+    font-size:14px;
+
+}
+
+
+
+.groupe-classe input:focus,
+.groupe-classe select:focus{
+
+    border-color:#2563eb;
+
+}
+
+
+
+
+
+
+
+/* =====================================
+   BOUTONS MODAL
+===================================== */
+
+
+.actions-classe{
+
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:15px;
+
+    margin-top:25px;
+
+
+}
+
+
+
+
+
+#btnAnnulerClasse{
+
+
+    background:#e5e7eb;
+
+    border:none;
+
+    padding:11px 20px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+
+}
+
+
+
+
+
+#btnAnnulerClasse:hover{
+
+
+    background:#cbd5e1;
+
+
+}
+
+
+
+
+
+#btnEnregistrerClasse{
+
+
+    background:#16a34a;
+
+    color:white;
+
+    border:none;
+
+    padding:11px 20px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+
+}
+
+
+
+
+#btnEnregistrerClasse:hover{
+
+
+    background:#15803d;
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================
+   PAGE FRAIS SCOLAIRES
+===================================== */
+
+
+#pageFraisScolaires{
+
+    width:100%;
+
+}
+
+
+
+/* HEADER */
+
+.frais-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+
+}
+
+
+
+.frais-header h1{
+
+    font-size:28px;
+    color:#1e293b;
+
+}
+
+
+
+
+.frais-bouton-ajouter{
+
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 22px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+}
+
+
+
+.frais-bouton-ajouter:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+
+
+
+/* BOITE LISTE */
+
+.frais-box{
+
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+
+}
+
+
+
+.frais-box h2{
+
+    margin-bottom:20px;
+    color:#334155;
+
+}
+
+
+
+
+
+/* TABLEAU */
+
+.frais-table{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+
+
+.frais-table thead{
+
+    background:#f1f5f9;
+
+}
+
+
+
+.frais-table th{
+
+    padding:14px;
+    text-align:left;
+    font-size:14px;
+    color:#475569;
+
+}
+
+
+
+.frais-table td{
+
+    padding:14px;
+    border-bottom:1px solid #e2e8f0;
+    color:#334155;
+
+}
+
+
+
+.frais-table tr:hover{
+
+    background:#f8fafc;
+
+}
+
+
+
+
+
+/* =====================================
+   MODAL AJOUT FRAIS
+===================================== */
+
+
+.frais-modal{
+
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.45);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:999;
+
+}
+
+
+
+
+
+.frais-modal-contenu{
+
+    background:white;
+
+    width:520px;
+
+    padding:25px;
+
+    border-radius:14px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+
+}
+
+
+
+
+
+/* ENTETE MODAL */
+
+.frais-modal-entete{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+
+
+.frais-modal-entete h2{
+
+    color:#1e293b;
+
+}
+
+
+
+
+
+.frais-fermer{
+
+    background:none;
+
+    border:none;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    color:#64748b;
+
+}
+
+
+
+.frais-fermer:hover{
+
+    color:#ef4444;
+
+}
+
+
+
+
+
+
+/* FORMULAIRE */
+
+
+.frais-formulaire{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+
+
+
+.frais-groupe{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+
+
+.frais-groupe label{
+
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+
+
+
+.frais-groupe input,
+.frais-groupe select{
+
+
+    height:42px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:7px;
+
+    padding:0 12px;
+
+    font-size:14px;
+
+    outline:none;
+
+
+}
+
+
+
+.frais-groupe input:focus,
+.frais-groupe select:focus{
+
+    border-color:#2563eb;
+
+}
+
+
+
+
+
+
+
+/* BOUTONS */
+
+
+.frais-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:12px;
+
+    margin-top:25px;
+
+}
+
+
+
+
+.frais-annuler{
+
+    background:#e2e8f0;
+
+    border:none;
+
+    padding:11px 20px;
+
+    border-radius:7px;
+
+    cursor:pointer;
+
+    color:#334155;
+
+}
+
+
+
+.frais-annuler:hover{
+
+    background:#cbd5e1;
+
+}
+
+
+
+
+
+.frais-enregistrer{
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:11px 20px;
+    border-radius:7px;
+    cursor:pointer;
+
+}
+
+
+
+.frais-enregistrer:hover{
+    background:#15803d;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ================================
+   RAPPORTS
+================================ */
+
+
+.entete-rapports{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+
+}
+
+
+.entete-rapports h1{
+
+    font-size:28px;
+    color:#333;
+
+}
+
+
+
+
+.boite-rapports{
+
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+
+}
+
+
+.boite-rapports h2{
+
+    margin-bottom:20px;
+    color:#444;
+
+}
+
+
+
+.table-rapports{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+
+.table-rapports th{
+    background:#f5f5f5;
+    padding:15px;
+    text-align:left;
+}
+
+
+
+.table-rapports td{
+    padding:15px;
+    border-bottom:1px solid #eee;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ================================
+   PARAMETRES
+================================ */
+
+
+.entete-parametres{
+
+    margin-bottom:25px;
+
+}
+
+
+.entete-parametres h1{
+
+    font-size:28px;
+    color:#333;
+
+}
+
+
+
+
+
+.boite-parametres{
+
+
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    width:600px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+
+
+}
+
+
+
+.boite-parametres h2{
+
+    margin-bottom:25px;
+
+}
+
+
+
+
+.groupe-parametre{
+
+    display:flex;
+    flex-direction:column;
+    margin-bottom:20px;
+
+}
+
+
+
+.groupe-parametre label{
+
+    margin-bottom:8px;
+    font-weight:bold;
+
+}
+
+
+
+.groupe-parametre input{
+
+
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:15px;
+
+
+}
+
+
+
+
+.bouton-enregistrer-parametre{
+
+
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+
+}
+
+
+
+.bouton-enregistrer-parametre:hover{
+
+    opacity:0.9;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================
+   PAGE SECTIONS
+===================================== */
+
+#pageSections .box{
+
+    margin-top:30px;
+
+}
+
+
+
+#pageSections table{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+
+
+#pageSections th{
+
+    text-align:left;
+    padding:14px;
+    background:#f5f6fa;
+    font-weight:600;
+
+}
+
+
+
+#pageSections td{
+
+    padding:14px;
+    border-bottom:1px solid #eee;
+
+}
+
+
+
+
+/* =====================================
+   MODAL SECTION
+===================================== */
+
+#modalNouvelleSection{
+
+    display:none;
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.45);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:1000;
+
+}
+
+
+
+
+
+#modalNouvelleSection .modal-contenu{
+
+    width:450px;
+
+    background:white;
+
+    border-radius:12px;
+
+    padding:25px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+
+}
+
+
+
+
+
+/* =====================================
+   ENTETE MODAL
+===================================== */
+
+#modalNouvelleSection .modal-entete{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+
+
+#modalNouvelleSection .modal-entete h2{
+
+    margin:0;
+
+    font-size:22px;
+
+}
+
+
+
+
+
+#btnFermerModalSection{
+
+    border:none;
+
+    background:none;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    color:#555;
+
+}
+
+
+
+
+
+#btnFermerModalSection:hover{
+
+    color:red;
+
+}
+
+
+
+
+
+/* =====================================
+   FORMULAIRE SECTION
+===================================== */
+
+
+#modalNouvelleSection .form-groupe{
+
+    margin-bottom:20px;
+
+}
+
+
+
+#modalNouvelleSection label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+}
+
+
+
+#modalNouvelleSection input,
+#modalNouvelleSection textarea{
+
+
+    width:100%;
+
+    padding:12px;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+}
+
+
+
+#modalNouvelleSection textarea{
+
+    height:100px;
+
+    resize:none;
+
+}
+
+
+
+
+
+
+/* =====================================
+   BOUTONS
+===================================== */
+/* =====================================
+   BOUTON NOUVELLE SECTION
+===================================== */
+
+#btnNouvelleSection{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 22px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+    position: relative;
+    left: 850px;
+}
+
+
+
+#btnNouvelleSection i{
+    font-size:16px;
+}
+
+
+
+
+#btnNouvelleSection:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+}
+#modalNouvelleSection .zone-boutons{
+    display:flex;
+    justify-content:flex-end;
+    gap:15px;
+    margin-top:25px;
+}
+
+
+
+
+
+#modalNouvelleSection .btn-secondaire{
+    padding:10px 20px;
+    border:none;
+    background:#ddd;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+
+
+
+
+#modalNouvelleSection .btn-principal{
+    padding:10px 20px;
+    border:none;
+    background:#2563eb;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+
+}
+
+
+
+
+
+#modalNouvelleSection .btn-principal:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+/* ==============================
+   NOTIFICATION ANIMEE
+============================== */
+
+.notification{
+
+    position:fixed;
+
+    top:25px;
+
+    right:25px;
+
+    min-width:300px;
+
+    padding:15px 20px;
+
+    background:#16a34a;
+
+    color:white;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    box-shadow:0 5px 20px rgba(0,0,0,0.2);
+
+
+    transform:translateX(120%);
+
+    transition:0.4s ease;
+
+    z-index:9999;
+
+}
+
+
+
+.notification.afficher{
+
+    transform:translateX(0);
+
+}
+
+
+
+.notification.erreur{
+
+    background:#dc2626;
+
+}
+
+
+
+.notification.info{
+
+    background:#2563eb;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==============================
+   MODAL SECTION
+============================== */
+
+#modalNouvelleSection{
+
+    display:none;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.5);
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:1000;
+
+}
+
+
+
+/* CONTENU DU MODAL */
+
+#modalNouvelleSection .modal-contenu{
+
+    width:420px;
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:12px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+
+    animation:ouvrirModal 0.3s ease;
+
+}
+
+
+
+@keyframes ouvrirModal{
+
+    from{
+
+        transform:translateY(-40px);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:translateY(0);
+
+        opacity:1;
+
+    }
+
+}
+
+
+
+/* TITRE */
+
+#titreModalSection{
+
+    margin-bottom:20px;
+
+    font-size:22px;
+
+    color:#333;
+
+}
+
+
+
+
+
+/* INPUT */
+
+#nomSection{
+
+    width:100%;
+
+    padding:12px;
+
+    margin-bottom:15px;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+    outline:none;
+
+}
+
+
+
+#nomSection:focus{
+
+    border-color:#2563eb;
+
+}
+
+
+
+
+
+/* TEXTAREA */
+
+#descriptionSection{
+
+    width:100%;
+
+    height:120px;
+
+    padding:12px;
+
+    resize:none;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+    outline:none;
+
+    margin-bottom:20px;
+
+}
+
+
+
+#descriptionSection:focus{
+
+    border-color:#2563eb;
+
+}
+
+
+
+
+
+/* BOUTON */
+
+#btnEnregistrerSection{
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+
+
+#btnEnregistrerSection:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+
+
+
+
+
+
+.btnChangerStatutSection{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+
+
+.statut-actif{
+    background-color: #28a745; /* vert */
+}
+
+
+.statut-inactif{
+    background-color: #dc3545; /* rouge */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===========================
+   MODAL RÉCUPÉRATION CLASSES
+=========================== */
+
+.modal-recuperation-classe{
+
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(3px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+
+}
+
+
+
+.contenu-modal-recuperation-classe{
+
+    width:650px;
+    max-width:90%;
+    max-height:80vh;
+
+    background:#fff;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    box-shadow:0 20px 45px rgba(0,0,0,.25);
+
+    animation:apparitionRecuperation .25s ease;
+
+}
+
+
+
+@keyframes apparitionRecuperation{
+
+    from{
+
+        opacity:0;
+        transform:translateY(-20px) scale(.95);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:translateY(0) scale(1);
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===============================
+   POPUP FLOTTANTE RECUPERATION
+================================ */
+
+
+.popup-recuperation-classe{
+
+
+    display:none;
+
+
+    position:fixed;
+
+
+    right:20px;
+
+
+    bottom:20px;
+
+
+    width:420px;
+
+
+    z-index:99999;
+
+
+}
+
+
+
+/* CONTENU */
+
+.contenu-popup-recuperation{
+    background:#ffffff;
+    border-radius:12px;
+    box-shadow:
+    0 10px 30px rgba(0,0,0,0.25);
+    overflow:hidden;
+
+
+}
+
+
+
+/* ENTETE */
+
+.entete-popup-recuperation{
+
+
+    height:50px;
+
+
+    padding:0 15px;
+
+
+    display:flex;
+
+
+    justify-content:space-between;
+
+
+    align-items:center;
+
+
+    background:#0d6efd;
+
+
+    color:white;
+
+
+}
+
+
+
+.entete-popup-recuperation h2{
+
+
+    font-size:16px;
+
+
+    margin:0;
+
+
+}
+
+
+
+.entete-popup-recuperation button{
+
+
+    border:none;
+
+
+    background:none;
+
+
+    color:white;
+
+
+    font-size:25px;
+
+
+    cursor:pointer;
+
+
+}
+
+
+
+
+/* CORPS */
+
+.corps-popup-recuperation{
+
+
+    padding:10px;
+
+
+}
+
+
+
+
+.tableau-classes-desactivees{
+
+
+    width:100%;
+
+
+    border-collapse:collapse;
+
+
+}
+
+
+
+
+.tableau-classes-desactivees th{
+
+
+    background:#f4f4f4;
+
+
+    padding:10px;
+
+
+    font-size:13px;
+
+
+    text-align:left;
+
+
+}
+
+
+
+.tableau-classes-desactivees td{
+
+
+    padding:9px;
+
+
+    font-size:13px;
+
+
+    border-bottom:1px solid #eee;
+
+
+}
+
+
+
+.tableau-classes-desactivees tbody{
+
+
+    display:block;
+
+
+    max-height:220px;
+
+
+    overflow-y:auto;
+
+
+}
+
+
+
+.tableau-classes-desactivees thead,
+.tableau-classes-desactivees tbody tr{
+
+
+    display:table;
+
+
+    width:100%;
+
+
+    table-layout:fixed;
+
+
+}
+
+
+
+.tableau-classes-desactivees tbody tr:hover{
+
+
+    background:#f5f9ff;
+
+
+}
+
+
+
+/* PIED */
+
+.pied-popup-recuperation{
+
+
+    display:flex;
+
+
+    justify-content:flex-end;
+
+
+    padding:12px;
+
+
+    border-top:1px solid #eee;
+
+
+}
+
+
+
+.pied-popup-recuperation button{
+
+
+    background:#198754;
+
+
+    color:white;
+
+
+    border:none;
+
+
+    padding:8px 20px;
+
+
+    border-radius:6px;
+
+
+    cursor:pointer;
+
+
+}
+
+
+
+.pied-popup-recuperation button:hover{
+
+
+    background:#157347;
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===========================
+   BOUTON RECUPERER CLASSES
+=========================== */
+
+
+#repupere_classe{
+
+    position:fixed;
+
+
+    right:25px;
+
+    bottom:25px;
+
+
+    width:65px;
+
+    height:65px;
+
+
+    border-radius:50%;
+
+
+    border:none;
+
+
+    background:#0b5ed7;
+
+
+    color:white;
+
+
+    font-size:0;
+
+
+    cursor:pointer;
+
+
+    display:flex;
+
+
+    justify-content:center;
+
+    align-items:center;
+
+
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.25);
+
+
+    z-index:9998;
+
+
+    transition:.3s;
+
+
+}
+
+
+
+/* ajouter une icône */
+
+#repupere_classe::before{
+
+
+    content:"↻";
+
+
+    font-size:32px;
+
+
+    font-weight:bold;
+
+
+}
+
+
+
+
+#repupere_classe:hover{
+    background:#084298;
+    transform:translateY(-5px) scale(1.05);
+    box-shadow:
+    0 12px 25px rgba(0,0,0,.30);
+}
+
+
+
+
+#repupere_classe:active{
+    transform:scale(.95);
+}
+
+
+
+
+
+
+
+
+/* ===========================
+   BOUTON RECUPERATION
+=========================== */
+
+#repupere_classe{
+
+    position:fixed;
+
+    right:25px;
+
+    bottom:25px;
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:50%;
+
+    border:none;
+
+    background:#0b5ed7;
+
+    color:white;
+
+    cursor:pointer;
+
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+
+    font-size:25px;
+
+
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.25);
+
+
+    z-index:9998;
+
+
+    transition:.3s;
+
+}
+
+
+
+#repupere_classe:hover{
+
+    transform:translateY(-5px);
+
+    background:#084298;
+
+}
+
+
+
+/* ===========================
+      BADGE NOMBRE
+=========================== */
+
+
+#nombreClassesSupprimees{
+
+
+    position:absolute;
+
+
+    top:-8px;
+
+
+    right:-5px;
+
+
+
+    min-width:25px;
+
+
+    height:25px;
+
+
+    padding:0 6px;
+
+
+    border-radius:50%;
+
+
+
+    background:#dc3545;
+
+
+    color:white;
+
+
+
+    display:flex;
+
+
+    justify-content:center;
+
+
+    align-items:center;
+
+
+
+    font-size:12px;
+
+
+    font-weight:bold;
+
+
+
+    border:3px solid white;
+
+
+
+    animation:pulsationBadge 1.5s infinite;
+
+
+}
+
+
+
+
+
+@keyframes pulsationBadge{
+
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+
+    50%{
+
+        transform:scale(1.15);
+
+    }
+
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===============================
+   MODAL NOUVEL ELEVE
+================================ */
+
+
+#modalNouvelEleve {
+
+    display:none;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.45);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:9999;
+
+}
+
+
+
+/* ===============================
+   CONTENU MODAL
+================================ */
+
+
+#modalNouvelEleve .modal-contenu {
+
+    width:90%;
+
+    height:90vh;
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:20px;
+
+    position:relative;
+
+    overflow-y:auto;
+
+    box-sizing:border-box;
+
+}
+
+
+
+/* ===============================
+   TITRE
+================================ */
+
+
+#modalNouvelEleve h2 {
+
+    text-align:center;
+
+    font-size:22px;
+
+    margin:0 0 20px 0;
+
+}
+
+
+
+
+
+/* ===============================
+   FERMER
+================================ */
+
+
+#btnFermerModalEleve {
+
+    position:absolute;
+
+    top:15px;
+
+    right:15px;
+
+    width:30px;
+
+    height:30px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#dc3545;
+
+    color:white;
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+/* ===============================
+   FORMULAIRE PRINCIPAL
+================================ */
+
+
+#formAjoutEleve {
+
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:15px;
+
+
+}
+
+
+
+
+
+
+/* ===============================
+   LES 3 SECTIONS
+================================ */
+
+
+.section-eleve,
+.section-parent,
+.section-inscription {
+
+
+    border:1px solid #999;
+
+    border-radius:6px;
+
+    padding:15px;
+
+    background:#fff;
+
+}
+
+
+
+
+
+/* Section inscription en bas */
+
+
+.section-inscription {
+
+    grid-column:1 / 3;
+
+}
+
+
+
+
+
+
+
+/* ===============================
+   TITRES DES SECTIONS
+================================ */
+
+
+.section-eleve h3,
+.section-parent h3,
+.section-inscription h3 {
+    font-size:15px;
+    margin:0 0 15px 0;
+    padding-bottom:8px;
+    border-bottom:1px solid #ccc;
+    color:#2563eb;
+
+}
+
+
+
+
+
+
+/* ===============================
+   CHAMPS
+================================ */
+
+
+.form-group {
+    display:flex;
+    flex-direction:column;
+    margin-bottom:10px;
+}
+
+.form-group-photo{
+
+    position: relative;
+    left: 220px;
+    bottom: 50px;
+    width: 80px;
+    height: auto;
+}
+
+
+
+.form-group label {
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:4px;
+
+}
+
+
+
+
+
+/* PETITS INPUTS */
+
+
+.form-group input,
+.form-group select {
+    width:170px;
+    height:28px;
+    padding:3px 6px;
+    border:1px solid #aaa;
+    border-radius:4px;
+    font-size:13px;
+    box-sizing:border-box;
+}
+
+
+
+
+
+.form-group textarea {
+    width:250px;
+    height:50px;
+    resize:none;
+    border:1px solid #aaa;
+    border-radius:4px;
+    padding:5px;
+    font-size:13px;
+
+}
+
+
+
+
+
+
+/* ===============================
+   INSCRIPTION EN LIGNE
+================================ */
+
+
+.ligne-inscription {
+    display:flex;
+    gap:25px;
+    flex-wrap:wrap;
+}
+
+
+
+
+
+.section-inscription .form-group input,
+.section-inscription .form-group select {
+    width:160px;
+}
+
+
+
+
+
+
+
+/* ===============================
+   BOUTON
+================================ */
+
+
+#formAjoutEleve button[type="submit"] {
+    grid-column:1 / 3;
+    width:200px;
+    height:35px;
+    margin:10px auto 0;
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+
+
+#formAjoutEleve button[type="submit"]:hover {
+    background:#1d4ed8;
+}
+
+
+
+
+
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+
+@media(max-width:900px){
+    #formAjoutEleve {
+
+        grid-template-columns:1fr;
+
+    }
+    .section-inscription {
+
+        grid-column:1;
+
+    }
+    #formAjoutEleve button[type="submit"] {
+
+        grid-column:1;
+    }
+}
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+
+<div class="logo">
+	<i class="fa-solid fa-school"></i>
+	<span>Mon Ecole  </span></span>
+</div>
+
+
+<div class="menu">
+
+
+<a id="menuDashboard" >
+
+    <i class="fa-solid fa-house"></i>
+
+    <span>Dashboard</span>
+
+</a>
+
+
+
+<a id="menuEleves">
+    <i class="fa-solid fa-user-graduate"></i>
+    <span>Élèves</span>
+</a>
+
+
+<a id="menuParents">
+    <i class="fa-solid fa-users"></i>
+    <span>Parents</span>
+</a>
+
+
+
+<a id="menuPaiements">
+<i class="fa-solid fa-money-bill-transfer"></i>
+<span>Paiements</span>
+</a>
+
+
+<a id="menuRecus">
+    <i class="fa-solid fa-file-invoice"></i>
+    <span>
+        Reçus
+    </span>
+</a>
+
+
+<a id="menuSections">
+    <i class="fa-solid fa-layer-group"></i>
+    <span>
+        Sections
+    </span>
+</a>
+
+
+<a id="menuClasses">
+    <i class="fa-solid fa-layer-group"></i>
+    <span>
+        Classes
+    </span>
+</a>
+
+
+
+<a id="menuFraisScolaires">
+    <i class="fa-solid fa-coins"></i>
+    <span>Frais scolaires</span>
+</a>
+
+
+<a id="menuRapports">
+<i class="fa-solid fa-chart-line"></i>
+<span>Rapports</span>
+</a>
+
+
+
+<a id="menuParametres">
+<i class="fa-solid fa-gear"></i>
+<span>Paramètres</span>
+</a>
+
+
+
+</div>
+</aside>
+
+
+
+
+
+<!-- HEADER -->
+<header class="header">
+    <h2 id="ecoleUtilisateurConnecte">
+        
+    </h2>
+    <div class="user">
+        <i class="fa-solid fa-bell"></i>
+        <div class="avatar" id="avatarUtilisateur">
+            SK
+        </div>
+
+        <div class="infosUtilisateur">
+
+            <span id="nomUtilisateurConnecte">
+                Chargement...
+            </span>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- MAIN -->
+
+
+<main class="content" id="contenuPrincipal">
+<div id="pageDashboard">
+
+
+
+<div class="topbar">
+
+
+<h1>
+
+Tableau de bord
+
+</h1>
+
+
+<input class="search"
+placeholder="Rechercher un élève...">
+
+
+</div>
+
+
+
+
+
+
+<div class="cards">
+
+
+
+<div class="card">
+
+<div class="card-title">
+
+Élèves
+
+<i class="fa-solid fa-user-graduate"></i>
+
+</div>
+
+<div class="value">
+
+1458
+
+</div>
+
+</div>
+
+
+
+
+<div class="card">
+
+<div class="card-title">
+
+Paiements
+
+<i class="fa-solid fa-money-bill"></i>
+
+</div>
+
+<div class="value">
+
+128
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="card">
+
+<div class="card-title">
+
+Dette
+
+<i class="fa-solid fa-triangle-exclamation"></i>
+
+</div>
+
+<div class="value">
+
+315
+
+</div>
+
+</div>
+
+
+
+
+<div class="card">
+
+<div class="card-title">
+
+Reçus
+
+<i class="fa-solid fa-receipt"></i>
+
+</div>
+
+<div class="value">
+
+1025
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="section">
+
+
+
+<div class="box chart">
+📊 Graphique des entrées financières
+</div>
+
+
+
+<div class="box">
+<h3>
+Caisse actuelle
+</h3>
+
+
+<br>
+<h2>
+3500 USD
+</h2>
+
+
+<br>
+<h2>
+12 500 000 CDF
+</h2>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="box" style="margin-top:30px;">
+<h3> Derniers paiements </h3>
+<table>
+	<tr>
+		<th>Reçu</th>
+		<th>Élève</th>
+		<th>Classe</th>
+		<th>Montant</th>
+		<th>Etat</th>
+	</tr>
+
+	<tr>
+		<td>REC0001</td>
+		<td>Steve Kasongo</td>
+		<td>6ème A</td>
+		<td>150 USD</td>
+		<td>
+		<span class="status">
+		Payé
+		</span>
+		</td>
+	</tr>
+
+	<tr>
+		<td>REC0002</td>
+		<td>Grâce Ilunga</td>
+		<td>5ème B</td>
+		<td>250000 CDF</td>
+		<td>
+		<span class="status">
+		Payé
+		</span>
+		</td>
+	</tr>
+</table>
+</div>
+
+
+
+
+
+<script src="ecole.js"> </script>
+</div>
+</main>
+</body>
+</html>

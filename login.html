@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Connexion - School ERP</title>
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+
+
+<style>
+
+
+*{
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Segoe UI",sans-serif;
+
+}
+
+
+body{
+
+height:100vh;
+
+background:#f1f5f9;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+}
+
+
+
+/* CONTENEUR */
+
+
+.login-container{
+width:400px;
+background:white;
+padding:40px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+
+
+/* LOGO */
+
+
+.logo{
+text-align:center;
+margin-bottom:30px;
+}
+
+
+.logo i{
+font-size:55px;
+color:#2563eb;
+}
+
+
+.logo h2{
+margin-top:15px;
+color:#0f172a;
+}
+
+
+
+
+
+/* INPUT */
+
+
+.input-group{
+
+margin-bottom:20px;
+
+}
+
+
+label{
+display:block;
+margin-bottom:8px;
+color:#475569;
+}
+
+
+
+input{
+width:100%;
+height:45px;
+border:1px solid #cbd5e1;
+border-radius:10px;
+padding:0 15px;
+font-size:15px;
+}
+
+
+
+input:focus{
+outline:none;
+border-color:#2563eb;
+}
+
+
+
+
+/* BUTTON */
+
+
+button{
+width:100%;
+height:45px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+
+button:hover{
+background:#1d4ed8;
+}
+
+
+
+
+.options{
+margin-top:20px;
+text-align:center;
+font-size:14px;
+color:#64748b;
+}
+</style>
+</head>
+
+
+<body>
+
+
+
+<div class="login-container">
+
+
+
+<div class="logo">
+
+
+<i class="fa-solid fa-school"></i>
+
+
+<h2>
+School ERP
+</h2>
+
+
+<p>
+Gestion financière scolaire
+</p>
+
+
+</div>
+
+
+
+
+
+<div class="input-group">
+
+<label>
+
+Numéro
+
+</label>
+
+
+<input
+id="telephone"
+type="text"
+placeholder="+243981387079">
+
+
+</div>
+<div class="input-group">
+<label>
+Mot de passe
+</label>
+
+
+<input
+id="mot_de_passe"
+type="password"
+placeholder="********">
+</div>
+
+
+
+
+
+<button id="btnConnexion">
+<i class="fa-solid fa-right-to-bracket"></i>
+Connexion
+</button>
+
+
+
+<div class="options">
+	Mot de passe oublié ?
+</div>
+</div>
+
+
+
+<script>
+let adresse_ip = "http://localhost:3000";
+
+// Bouton connexion
+document
+.getElementById("btnConnexion")
+.addEventListener("click", connexion);
+
+
+// Fonction de connexion
+async function connexion() {
+
+    const telephone = document
+    .getElementById("telephone")
+    .value
+    .trim();
+
+    const mot_de_passe = document
+    .getElementById("mot_de_passe")
+    .value
+    .trim();
+
+    if (!telephone || !mot_de_passe) {
+
+        alert("Veuillez remplir tous les champs.");
+
+        return;
+
+    }
+
+
+
+    try {
+
+        const response = await fetch(`${adresse_ip}/auth/login`, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                telephone,
+                mot_de_passe
+
+            })
+
+        });
+
+        const data = await response.json();
+
+
+
+        //la connexion reussi.............
+        if (data.success) {
+
+            //Sauvegarde utilisateur connecté
+            localStorage.setItem(
+                "utilisateur",
+                JSON.stringify({
+                    id_utilisateur: data.utilisateur.id_utilisateur,
+                    id_ecole: data.utilisateur.id_ecole,
+                    nom: data.utilisateur.nom,
+                    postnom: data.utilisateur.postnom,
+                    prenom: data.utilisateur.prenom,
+                    role: data.utilisateur.role,
+                    nom_ecole: data.utilisateur.nom_ecole
+                })
+            );
+
+            //Redirection selon le rôle
+            switch (data.utilisateur.role) {
+                case "SUPER_ADMIN":
+                    window.location.href = "interface/adminP/administrateurP.html";
+                    break;
+
+                case "ADMIN_ECOLE":
+                    window.location.href = "interface/ecole/ecole.html";
+                    break;
+
+                case "DIRECTION":
+                    window.location.href = "interface/ecole/direction.html";
+                    break;
+
+                case "CAISSIER":
+                    window.location.href = "interface/ecole/ecole.html";
+                    break;
+
+                case "ENSEIGNANT":
+                    window.location.href = "interface/ecole/enseignant.html";
+                    break;
+
+                case "PARENT":
+                    window.location.href = "interface/parent/parent.html";
+                    break;
+
+
+                default:
+               alert("Rôle inconnu.");
+            }
+        } else {
+            alert(data.message);
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Impossible de se connecter au serveur.");
+    }
+}
+
+
+</script>
+</body>
+</html>
