@@ -3179,7 +3179,57 @@ app.get("/parents/recherche", (req,res)=>{
 
 
 
+// =============================
+// COMPTER NOMBRE D'ELEVES
+// =============================
 
+app.get(
+"/eleves/count",
+(req,res)=>{
+
+
+    const id_ecole = req.query.id_ecole;
+
+
+    let sql = `
+        SELECT COUNT(*) AS total
+        FROM eleves
+    `;
+
+
+    let params = [];
+
+
+    if(id_ecole){
+
+        sql += `
+            WHERE id_ecole = ?
+        `;
+
+        params.push(id_ecole);
+
+    }
+
+
+
+    db.query(
+        sql,
+        params,
+        (err,result)=>{
+            if(err){
+                return res.status(500).json({
+                    success:false,
+                    message:err.message
+                });
+            }
+
+            res.json({
+                success:true,
+                total:result[0].total
+            });
+        }
+    );
+});
 
 
 

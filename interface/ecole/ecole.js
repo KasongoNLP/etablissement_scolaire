@@ -5868,3 +5868,39 @@ function afficherNotification(
 
 
 }
+
+chargerNombreEleves();
+function chargerNombreEleves(){
+
+const utilisateur = JSON.parse(
+    localStorage.getItem("utilisateur")
+);
+const id_ecole = utilisateur.id_ecole;
+
+
+    fetch(
+        adresse_ip_serveur +
+        "eleves/count?id_ecole=" +
+        id_ecole
+    )
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+
+        if(data.success){
+            document.getElementById(
+                "nombreEleves"
+            ).innerHTML =
+            data.total;
+        }
+    })
+
+    .catch(err=>{
+        console.error(
+            "Erreur chargement nombre élèves :",
+            err
+        );
+    });
+}

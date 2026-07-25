@@ -295,8 +295,7 @@ CREATE TABLE parent_eleve (
     REFERENCES parents(id_parent),
     CONSTRAINT fk_eleve_relation
     FOREIGN KEY(id_eleve)
-    REFERENCES eleves(id_eleve),
-    ON DELETE CASCADE
+    REFERENCES eleves(id_eleve)
 
 );
 
