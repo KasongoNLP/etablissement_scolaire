@@ -328,24 +328,41 @@ function afficherEleves(){
     </div>
 
 
+<!-- Parent existant -->
+<div id="parentExistant">
 
-    <!-- Parent existant -->
+    <div class="form-group">
 
-    <div id="parentExistant">
+        <label>
+            Rechercher un parent
+        </label>
 
-        <div class="form-group">
+        <input
+            type="text"
+            id="recherche_parent"
+            placeholder="Nom, téléphone...">
 
-            <label>
-                Rechercher un parent
-            </label>
+        <button 
+            type="button"
+            id="btnChercherParent">
+            Chercher le parent
+        </button>
 
-            <input
-                type="text"
-                id="recherche_parent"
-                placeholder="Nom, téléphone...">
-
-        </div>
     </div>
+
+
+    <div id="resultatsParents">
+
+    </div>
+
+
+    <input 
+        type="hidden"
+        id="id_parent_selectionne"
+        name="id_parent_selectionne"
+    >
+
+</div>
 
 
 
@@ -556,7 +573,7 @@ function afficherEleves(){
 
 </div>
 
-
+<div id="notification"></div>
     `;
 
 
@@ -657,6 +674,7 @@ async function chargerMatricule(){
 
             champMatricule.value =
             resultat.matricule;
+            afficherNotification(resultat.matricule);
 
 
         }else{
@@ -790,6 +808,108 @@ choixModeParent.forEach(option => {
 
 
 
+let parentSelectionne = null;
+document.getElementById("btnChercherParent")
+.addEventListener("click", ()=>{
+
+
+    const recherche =
+    document.getElementById("recherche_parent").value.trim();
+
+
+
+    if(recherche.length < 2){
+
+        afficherNotification("Entrez au moins 2 caractères");
+
+        return;
+
+    }
+
+
+
+    fetch(
+        adresse_ip_serveur +
+        "parents/recherche?texte=" +
+        encodeURIComponent(recherche)
+    )
+
+
+    .then(res=>res.json())
+    .then(data=>{
+        const zone =
+        document.getElementById("resultatsParents");
+
+
+        zone.innerHTML="";
+        if(!data.success || data.parents.length===0){
+
+            zone.innerHTML =
+            `
+            <p>
+                Aucun parent trouvé
+            </p>
+            `;
+            afficherNotification(data.success);
+            return;
+        }
+        data.parents.forEach(parent=>{
+            const div =
+            document.createElement("div");
+            div.className =
+            "parent-resultat";
+            div.innerHTML = `
+                <strong>
+                    ${parent.nom}
+                    ${parent.postnom || ""}
+                    ${parent.prenom || ""}
+                </strong>
+
+                <br>
+
+                Téléphone :
+                ${parent.telephone}
+            `;
+            div.onclick = ()=>{
+                parentSelectionne = parent.id_parent;
+
+
+                // garder aussi dans le champ caché
+                document.getElementById(
+                    "id_parent_selectionne"
+                ).value = parent.id_parent;
+
+
+                console.log(
+                    "Parent sélectionné global :",
+                    parentSelectionne
+                );
+
+
+                document.getElementById(
+                    "recherche_parent"
+                ).value =
+                parent.nom+" "+parent.prenom;
+                zone.innerHTML =
+                `
+                <p style="color:green">
+                Parent sélectionné
+                </p>
+                `;
+            };
+            zone.appendChild(div);
+        });
+    })
+    .catch(err=>{
+
+        console.error(
+            "Erreur recherche parent :",
+            err
+        );
+    });
+});
+
+
 
 
 
@@ -807,6 +927,33 @@ document
 
 
     const formData = new FormData();
+
+
+    // =====================
+    // ECOLE
+    // =====================
+
+    const utilisateur =
+    JSON.parse(
+        localStorage.getItem("utilisateur")
+    );
+
+
+    if(!utilisateur){
+
+        alert("Utilisateur non connecté");
+
+        return;
+
+    }
+
+
+
+    formData.append(
+        "id_ecole",
+        utilisateur.id_ecole
+    );
+
 
 
     // =====================
@@ -943,6 +1090,26 @@ document
         );
 
     }
+    else{
+
+
+    // =====================
+    // PARENT EXISTANT
+    // =====================
+
+
+    formData.append(
+        "id_parent_selectionne",
+        parentSelectionne
+    );
+
+
+    console.log(
+        "Parent envoyé :",
+        parentSelectionne
+    );
+
+}
 
 
 
@@ -999,7 +1166,7 @@ document
 
 
     const resultat = await response.json();
-    console.log(resultat);
+    console.log(resultat, 'erreur');
 
 
 });

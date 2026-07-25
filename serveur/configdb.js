@@ -3,6 +3,8 @@ const mysql = require("mysql2");
 const cors = require("cors");
 const path = require("path");
 const cron = require("node-cron");
+const multer = require("multer");
+const fs = require("fs");
 
 
 const app = express();
@@ -25,6 +27,45 @@ app.use(express.json());
 const ROOT_DIR = path.join(__dirname, "../");
 // Dossier interface
 const INTERFACE_DIR = path.join(ROOT_DIR, "interface");
+
+
+
+// ======================
+// DOSSIER PHOTOS ELEVES
+// ======================
+
+const DOSSIER_PHOTOS = path.join(ROOT_DIR, "uploads", "eleves");
+if (!fs.existsSync(DOSSIER_PHOTOS)) {
+
+    fs.mkdirSync(DOSSIER_PHOTOS, {
+        recursive: true
+    });
+
+}
+
+
+
+const stockage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, DOSSIER_PHOTOS);
+    },
+
+    filename: (req, file, cb) => {
+
+        const extension = path.extname(file.originalname);
+
+        const nomFichier =
+            Date.now() +
+            extension;
+
+        cb(null, nomFichier);
+
+    }
+});
+
+const upload = multer({
+    storage: stockage
+});
 
 
 console.log("Racine projet :", ROOT_DIR);
@@ -1883,6 +1924,174 @@ app.get("/generer_matricule_eleve", (req,res)=>{
 
 
 
+// =====================================
+// INSCRIPTION ELEVE
+// =====================================
+
+app.post(
+"/eleves/inscriptionA",
+upload.single("photo"),
+(req,res)=>{
+
+
+    const {
+
+        id_ecole,
+
+        matricule,
+
+        nom,
+        postnom,
+        prenom,
+        sexe,
+        date_naissance,
+        lieu_naissance,
+        nationalite,
+        telephone,
+
+
+        parent_nom,
+        parent_postnom,
+        parent_prenom,
+        parent_sexe,
+        parent_telephone,
+        profession,
+        type_responsable,
+
+
+        id_classe,
+        id_annee_scolaire,
+
+
+        date_inscription,
+        numero_inscription,
+        observation
+
+
+    } = req.body;
+
+
+
+    const photo = req.file
+    ? req.file.filename
+    : null;
+
+
+
+    console.log("DONNEES INSCRIPTION :",req.body);
+
+
+
+    db.beginTransaction((err)=>{
+
+
+        if(err){
+
+            return res.status(500).json({
+
+                success:false,
+                message:"Erreur démarrage transaction"
+
+            });
+
+        }
+
+
+
+        function annuler(message){
+
+            db.rollback(()=>{
+
+                res.status(500).json({
+
+                    success:false,
+                    message
+
+                });
+
+            });
+
+        }
+
+
+
+
+        function convertirSexe(valeur){
+
+            if(valeur==="Féminin")
+                return "Feminin";
+
+
+            if(valeur==="Masculin")
+                return "Masculin";
+
+
+            return valeur;
+
+        }
+
+
+
+
+        function convertirLien(valeur){
+
+            if(valeur==="Père")
+                return "Pere";
+
+
+            if(valeur==="Mère")
+                return "Mere";
+
+
+            if(valeur==="Tuteur")
+                return "Tuteur";
+
+
+            return "Autre";
+
+        }
+
+
+
+
+
+        // =========================
+        // CREATION EMAIL PARENT
+        // =========================
+
+
+        let email_parent =
+        "parent@gmail.com";
+
+
+
+        db.query(
+
+            `
+            SELECT id_utilisateur
+            FROM utilisateurs
+            WHERE email = ?
+            `,
+
+            [email_parent],
+
+
+            (err,result)=>{
+
+
+                if(err)
+                    return annuler(
+                        "Erreur recherche email parent : "+err.message
+                    );
+
+
+
+                if(result.length > 0){
+
+                    email_parent =
+                    "parent"+Date.now()+"@gmail.com";
+
+                }
 
 
 
@@ -1890,6 +2099,1076 @@ app.get("/generer_matricule_eleve", (req,res)=>{
 
 
 
+                // =========================
+                // CREATION UTILISATEUR
+                // =========================
+
+
+
+                db.query(
+
+                    `
+                    INSERT INTO utilisateurs
+                    (
+                        id_ecole,
+                        nom,
+                        postnom,
+                        prenom,
+                        email,
+                        telephone,
+                        mot_de_passe,
+                        role
+                    )
+
+                    VALUES(?,?,?,?,?,?,?,?)
+                    `,
+
+
+                    [
+
+                        id_ecole,
+                        parent_nom,
+                        parent_postnom,
+                        parent_prenom,
+                        email_parent,
+                        parent_telephone,
+                        "123456",
+                        "PARENT"
+
+                    ],
+
+
+                    (err,result)=>{
+
+
+                        if(err)
+                            return annuler(
+                                "Erreur utilisateur parent : "
+                                +err.message
+                            );
+
+
+
+                        const id_utilisateur =
+                        result.insertId;
+
+
+
+
+
+
+
+                        // =========================
+                        // CREATION PARENT
+                        // =========================
+
+
+                        db.query(
+
+                            `
+                            INSERT INTO parents
+                            (
+                                id_utilisateur,
+                                nom,
+                                postnom,
+                                prenom,
+                                sexe,
+                                telephone_secondaire,
+                                profession
+                            )
+
+                            VALUES(?,?,?,?,?,?,?)
+                            `,
+
+
+                            [
+
+                                id_utilisateur,
+                                parent_nom,
+                                parent_postnom,
+                                parent_prenom,
+                                convertirSexe(parent_sexe),
+                                parent_telephone,
+                                profession
+
+                            ],
+
+
+                            (err,result)=>{
+
+
+                                if(err)
+                                    return annuler(
+                                        "Erreur parent : "
+                                        +err.message
+                                    );
+
+
+
+                                const id_parent =
+                                result.insertId;
+
+
+
+
+
+
+
+
+
+                                // =========================
+                                // CREATION ELEVE
+                                // =========================
+
+
+
+                                db.query(
+
+                                    `
+                                    INSERT INTO eleves
+                                    (
+                                        id_ecole,
+                                        matricule,
+                                        nom,
+                                        postnom,
+                                        prenom,
+                                        sexe,
+                                        date_naissance,
+                                        lieu_naissance,
+                                        nationalite,
+                                        telephone,
+                                        photo
+                                    )
+
+                                    VALUES(?,?,?,?,?,?,?,?,?,?,?)
+                                    `,
+
+
+                                    [
+
+                                        id_ecole,
+                                        matricule,
+                                        nom,
+                                        postnom,
+                                        prenom,
+                                        convertirSexe(sexe),
+                                        date_naissance,
+                                        lieu_naissance,
+                                        nationalite,
+                                        telephone,
+                                        photo
+
+                                    ],
+
+
+                                    (err,result)=>{
+
+
+                                        if(err)
+                                            return annuler(
+                                                "Erreur élève : "
+                                                +err.message
+                                            );
+
+
+
+                                        const id_eleve =
+                                        result.insertId;
+
+
+
+
+
+
+
+
+
+                                        // =========================
+                                        // LIEN PARENT ELEVE
+                                        // =========================
+
+
+                                        db.query(
+
+                                            `
+                                            INSERT INTO parent_eleve
+                                            (
+                                                id_parent,
+                                                id_eleve,
+                                                lien,
+                                                responsable_principal
+                                            )
+
+                                            VALUES(?,?,?,?)
+                                            `,
+
+
+                                            [
+
+                                                id_parent,
+                                                id_eleve,
+                                                convertirLien(type_responsable),
+                                                1
+
+                                            ],
+
+
+                                            (err)=>{
+
+
+                                                if(err)
+                                                    return annuler(
+                                                        "Erreur liaison parent élève : "
+                                                        +err.message
+                                                    );
+
+
+
+
+
+
+
+
+
+                                                    // =========================
+                                                    // INSCRIPTION
+                                                    // =========================
+
+
+
+                                                    db.query(
+
+                                                        `
+                                                        INSERT INTO inscriptions
+                                                        (
+                                                            id_ecole,
+                                                            id_eleve,
+                                                            id_classe,
+                                                            id_annee_scolaire,
+                                                            date_inscription,
+                                                            numero_inscription,
+                                                            observation
+                                                        )
+
+                                                        VALUES(?,?,?,?,?,?,?)
+                                                        `,
+
+
+                                                        [
+
+                                                            id_ecole,
+                                                            id_eleve,
+                                                            id_classe,
+                                                            id_annee_scolaire,
+                                                            date_inscription,
+                                                            numero_inscription,
+                                                            observation
+
+                                                        ],
+
+
+                                                        (err)=>{
+
+
+                                                            if(err)
+                                                                return annuler(
+                                                                    "Erreur inscription : "
+                                                                    +err.message
+                                                                );
+
+
+
+
+
+                                                            db.commit((err)=>{
+
+
+                                                                if(err)
+                                                                    return annuler(
+                                                                        "Erreur validation transaction : "
+                                                                        +err.message
+                                                                    );
+
+
+
+                                                                res.json({
+
+                                                                    success:true,
+
+                                                                    message:
+                                                                    "Élève inscrit avec succès",
+
+                                                                    id_eleve
+
+                                                                });
+
+
+
+                                                            });
+
+
+
+                                                        }
+
+                                                    );
+
+
+
+
+
+                                            }
+
+                                        );
+
+
+
+
+
+                                    }
+
+                                );
+
+
+
+
+
+                            }
+
+                        );
+
+
+
+                    }
+
+                );
+
+
+
+            }
+
+        );
+
+
+
+    });
+
+
+
+});
+//////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.post(
+"/eleves/inscription",
+upload.single("photo"),
+(req,res)=>{
+
+
+    const{
+
+        id_ecole,
+        matricule,
+        nom,
+        postnom,
+        prenom,
+        sexe,
+        date_naissance,
+        lieu_naissance,
+        nationalite,
+        telephone,
+
+        mode_parent,
+        id_parent_selectionne,
+
+        parent_nom,
+        parent_postnom,
+        parent_prenom,
+        parent_sexe,
+        parent_telephone,
+        profession,
+        type_responsable,
+
+        id_classe,
+        id_annee_scolaire,
+        date_inscription,
+        numero_inscription,
+        observation
+
+    } = req.body;
+
+
+
+    let photo=null;
+
+
+    if(req.file){
+
+        photo="uploads/eleves/"+req.file.filename;
+
+    }
+
+
+
+    db.beginTransaction((err)=>{
+
+
+        if(err){
+
+            return res.status(500).json({
+
+                success:false,
+                message:"Erreur transaction"
+
+            });
+
+        }
+
+
+
+        function annuler(message){
+
+            db.rollback(()=>{
+
+                res.status(500).json({
+
+                    success:false,
+                    message
+
+                });
+
+            });
+
+        }
+
+
+
+
+        function convertirSexe(valeur){
+
+            if(valeur==="Féminin")
+                return "Feminin";
+
+
+            if(valeur==="Masculin")
+                return "Masculin";
+
+
+            return valeur;
+
+        }
+
+
+
+
+        function convertirLien(valeur){
+
+            if(valeur==="Père")
+                return "Pere";
+
+
+            if(valeur==="Mère")
+                return "Mere";
+
+
+            if(valeur==="Tuteur")
+                return "Tuteur";
+
+
+            return "Autre";
+
+        }
+
+
+
+        let id_parent=null;
+
+
+
+        //=================================
+        // CREATION ELEVE
+        //=================================
+
+        function creerEleve(){
+
+
+
+            db.query(
+
+                `
+                INSERT INTO eleves
+                (
+                    id_ecole,
+                    matricule,
+                    nom,
+                    postnom,
+                    prenom,
+                    sexe,
+                    date_naissance,
+                    lieu_naissance,
+                    nationalite,
+                    telephone,
+                    photo
+                )
+
+                VALUES(?,?,?,?,?,?,?,?,?,?,?)
+                `,
+
+
+                [
+
+                    id_ecole,
+                    matricule,
+                    nom,
+                    postnom,
+                    prenom,
+                    convertirSexe(sexe),
+                    date_naissance,
+                    lieu_naissance,
+                    nationalite,
+                    telephone,
+                    photo
+
+                ],
+
+
+
+                (err,result)=>{
+
+
+                    if(err){
+
+                        return annuler(
+                            "Erreur création élève : "+
+                            err.message
+                        );
+
+                    }
+
+
+
+                    const id_eleve=result.insertId;
+
+
+
+
+                    //=================================
+                    // LIAISON PARENT ELEVE
+                    //=================================
+
+
+
+console.log(
+    "VERIFICATION AVANT LIAISON",
+    {
+        id_parent,
+        id_eleve
+    }
+);
+
+
+db.query(
+    "SELECT id_parent FROM parents WHERE id_parent=?",
+    [id_parent],
+    (err, rows)=>{
+
+        console.log(
+            "Parent visible dans transaction :",
+            rows
+        );
+
+    }
+);
+
+
+                    db.query(
+
+                        `
+                        INSERT INTO parent_eleve
+                        (
+                            id_parent,
+                            id_eleve,
+                            lien,
+                            responsable_principal
+                        )
+
+                        VALUES(?,?,?,?)
+                        `,
+
+
+                        [
+
+                            id_parent,
+                            id_eleve,
+                            convertirLien(type_responsable),
+                            1
+
+                        ],
+
+
+
+                        (err)=>{
+
+
+                            if(err){
+
+                                return annuler(
+                                    "Erreur liaison parent/élève : "+
+                                    err.message
+                                );
+
+                            }
+
+
+
+
+
+                            //=================================
+                            // INSCRIPTION
+                            //=================================
+
+
+                            db.query(
+
+                                `
+                                INSERT INTO inscriptions
+                                (
+                                    id_ecole,
+                                    id_eleve,
+                                    id_classe,
+                                    id_annee_scolaire,
+                                    date_inscription,
+                                    numero_inscription,
+                                    observation
+                                )
+
+                                VALUES(?,?,?,?,?,?,?)
+                                `,
+
+
+                                [
+
+                                    id_ecole,
+                                    id_eleve,
+                                    id_classe,
+                                    id_annee_scolaire,
+                                    date_inscription,
+                                    numero_inscription,
+                                    observation
+
+                                ],
+
+
+
+
+                                (err)=>{
+
+
+                                    if(err){
+
+                                        return annuler(
+                                            "Erreur inscription : "+
+                                            err.message
+                                        );
+
+                                    }
+
+
+
+
+                                    db.commit((err)=>{
+
+
+                                        if(err){
+
+                                            return annuler(
+                                                "Erreur validation transaction : "+
+                                                err.message
+                                            );
+
+                                        }
+
+
+
+
+                                        res.json({
+
+                                            success:true,
+                                            message:"Élève inscrit avec succès.",
+                                            id_eleve
+
+                                        });
+
+
+
+                                    });
+
+
+
+                                }
+
+
+                            );
+
+
+
+                        }
+
+
+                    );
+
+
+
+                }
+
+
+
+            );
+
+
+        }
+
+
+        //=====================================
+        // GESTION DU PARENT
+        //=====================================
+
+
+        if(mode_parent === "existant"){
+
+
+            id_parent = id_parent_selectionne;
+
+
+
+            if(!id_parent){
+
+                return annuler(
+                    "Aucun parent sélectionné"
+                );
+
+            }
+
+
+
+            // création de l'élève
+
+            creerEleve();
+
+
+
+        }else{
+
+
+            //=====================================
+            // CREATION NOUVEAU PARENT
+            //=====================================
+
+
+          db.query(`
+                    INSERT INTO utilisateurs
+                    (
+                        id_ecole,
+                        nom,
+                        postnom,
+                        prenom,
+                        telephone,
+                        mot_de_passe,
+                        role
+                    )
+
+                    VALUES(?,?,?,?,?,?,?)
+                    `,
+
+                    [
+
+                        id_ecole,
+                        parent_nom,
+                        parent_postnom,
+                        parent_prenom,
+                        parent_telephone,
+                        "1234",
+                        "PARENT"
+
+                    ],
+
+
+                (err,result)=>{
+
+
+                    if(err){
+
+                        return annuler(
+                            "Erreur création utilisateur parent : "+
+                            err.message
+                        );
+
+                    }
+
+
+
+                    const id_utilisateur = result.insertId;
+
+
+
+
+
+                    //=====================================
+                    // CREATION TABLE PARENTS
+                    //=====================================
+
+                    db.query(
+
+                        `
+                        INSERT INTO parents
+                        (
+                            id_utilisateur,
+                            nom,
+                            postnom,
+                            prenom,
+                            sexe,
+                            profession,
+                            type_responsable
+                        )
+
+                        VALUES(?,?,?,?,?,?,?)
+                        `,
+
+                        [
+
+                            id_utilisateur,
+                            parent_nom,
+                            parent_postnom,
+                            parent_prenom,
+                            convertirSexe(parent_sexe),
+                            profession,
+                            convertirLien(type_responsable)
+
+                        ],
+
+
+                        (err,result)=>{
+
+
+        if(err){
+
+            return annuler(
+                "Erreur création parent : "+
+                err.message
+            );
+
+        }
+
+
+        id_parent = result.insertId;
+
+
+        console.log(
+            "ID parent créé :",
+            id_parent
+        );
+
+
+        creerEleve();
+
+
+    }
+
+);
+
+
+
+                }
+
+
+
+            );
+
+
+
+        }
+
+    });
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//chercher le parent existent 
+// =====================================
+// RECHERCHE PARENT EXISTANT
+// =====================================
+
+app.get("/parents/recherche", (req,res)=>{
+
+
+    const texte = req.query.texte;
+
+
+
+    if(!texte || texte.trim() === ""){
+
+        return res.status(400).json({
+
+            success:false,
+
+            message:"Texte de recherche obligatoire"
+
+        });
+
+    }
+
+
+
+    const recherche = "%" + texte + "%";
+
+
+
+    const sql = `
+
+        SELECT
+
+            p.id_parent,
+
+            p.nom,
+
+            p.postnom,
+
+            p.prenom,
+
+            p.sexe,
+
+            p.profession,
+
+            u.telephone
+
+
+        FROM parents p
+
+
+        INNER JOIN utilisateurs u
+
+        ON p.id_utilisateur = u.id_utilisateur
+
+
+        WHERE 
+
+            p.nom LIKE ?
+
+            OR p.postnom LIKE ?
+
+            OR p.prenom LIKE ?
+
+            OR u.telephone LIKE ?
+
+
+        ORDER BY p.nom ASC
+
+
+        LIMIT 20
+
+    `;
+
+
+
+    db.query(
+
+        sql,
+
+        [
+
+            recherche,
+            recherche,
+            recherche,
+            recherche
+
+        ],
+
+
+        (err,result)=>{
+
+
+            if(err){
+
+                console.error(
+                    "Erreur recherche parent :",
+                    err
+                );
+
+
+                return res.status(500).json({
+
+                    success:false,
+
+                    message:"Erreur serveur recherche parent"
+
+                });
+
+            }
+
+
+
+            res.json({
+                success:true,
+                parents:result
+
+            });
+
+
+
+        }
+
+    );
+
+
+});
 
 
 

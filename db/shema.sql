@@ -295,7 +295,8 @@ CREATE TABLE parent_eleve (
     REFERENCES parents(id_parent),
     CONSTRAINT fk_eleve_relation
     FOREIGN KEY(id_eleve)
-    REFERENCES eleves(id_eleve)
+    REFERENCES eleves(id_eleve),
+    ON DELETE CASCADE
 
 );
 
@@ -459,20 +460,29 @@ VALUES
 
 
 
-CREATE TABLE modeles_matricules (
-    id_modele INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE configuration_matricules (
+    id_configuration INT AUTO_INCREMENT PRIMARY KEY,
     id_ecole INT NOT NULL,
-    nom_modele VARCHAR(100) NOT NULL,
-    format VARCHAR(255) NOT NULL,
+    nom_configuration VARCHAR(100) NOT NULL,
+    format_matricule VARCHAR(255) NOT NULL,
+    longueur_numero INT DEFAULT 4,
     compteur INT DEFAULT 0,
+    separateur VARCHAR(5) DEFAULT '-',
+    utiliser_annee BOOLEAN DEFAULT TRUE,
+    utiliser_section BOOLEAN DEFAULT TRUE,
+    utiliser_classe BOOLEAN DEFAULT FALSE,
+    prefixe VARCHAR(50),
     statut ENUM(
-        'Actif',
-        'Inactif'
-    ) DEFAULT 'Actif',
+        'Active',
+        'Inactive'
+    ) DEFAULT 'Active',
+
+
 
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-
+    date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_config_matricule_ecole
     FOREIGN KEY(id_ecole)
     REFERENCES ecoles(id_ecole)
     ON DELETE CASCADE
