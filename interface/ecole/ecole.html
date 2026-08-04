@@ -4263,6 +4263,1195 @@ display:none;
     }
 }
 
+
+
+
+
+.recherche-eleve{
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:15px 0;
+
+}
+
+.recherche-eleve input{
+
+    width:220px;
+    padding:8px 10px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:14px;
+    outline:none;
+
+}
+
+.recherche-eleve input:focus{
+
+    border-color:#2563eb;
+
+}
+
+.recherche-eleve button{
+
+    padding:8px 14px;
+    border:none;
+    border-radius:5px;
+    background:#2563eb;
+    color:#fff;
+    cursor:pointer;
+    font-size:14px;
+
+}
+
+.recherche-eleve button:hover{
+
+    background:#1d4ed8;
+
+}
+
+/*(((((((((((((((((())))))))))))))))))))))))))))))))))))))*/
+/*==========================
+    CONTENEUR
+==========================*/
+
+.cards-parametres{
+
+    width:95%;
+
+    margin:20px auto;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+    gap:25px;
+
+}
+
+
+/*==========================
+    CARTE
+==========================*/
+
+.card-parametre{
+
+    background:#ffffff;
+
+    border-radius:15px;
+
+    padding:30px 20px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    border:1px solid #e5e5e5;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.10);
+
+    transition:.3s;
+
+}
+
+
+/*==========================
+    SURVOL
+==========================*/
+
+.card-parametre:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 12px 30px rgba(0,0,0,.18);
+
+    border-color:#0d6efd;
+
+}
+
+
+/*==========================
+    ICONE
+==========================*/
+
+.card-parametre i{
+
+    font-size:55px;
+
+    color:#0d6efd;
+
+    margin-bottom:20px;
+
+}
+
+
+/*==========================
+    TITRE
+==========================*/
+
+.card-parametre h3{
+
+    margin:0;
+
+    font-size:22px;
+
+    color:#2c3e50;
+
+}
+
+
+/*==========================
+    DESCRIPTION
+==========================*/
+
+.card-parametre p{
+
+    margin-top:12px;
+
+    color:#777;
+
+    font-size:15px;
+
+    line-height:22px;
+
+}
+
+
+.card-parametre:nth-child(1) i{
+    color:#28a745;
+}
+
+.card-parametre:nth-child(2) i{
+    color:#0d6efd;
+}
+
+.card-parametre:nth-child(3) i{
+    color:#ff9800;
+}
+
+.card-parametre:nth-child(4) i{
+    color:#dc3545;
+}
+
+
+/*==========================
+    VERSION MOBILE
+==========================*/
+
+@media(max-width:768px){
+
+    .cards-parametres{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================
+   MODAL GESTION TYPES DE FRAIS
+===================================== */
+
+
+/* Fond */
+
+.fond-modal {
+
+    position: fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(15,23,42,0.55);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999;
+
+}
+
+
+
+/* Fenêtre */
+
+.fenetre-modal {
+
+
+    width:90vw;
+
+    height:85vh;
+
+    background:#ffffff;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    display:flex;
+
+    flex-direction:column;
+
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+
+
+}
+
+
+
+
+
+/* =====================================
+   ENTETE
+===================================== */
+
+
+.entete-modal {
+
+
+    height:90px;
+
+    padding:15px 30px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    background:#ffffff;
+
+    border-bottom:1px solid #e5e7eb;
+    position: relative;
+    top: 20px;
+
+}
+
+
+
+
+.entete-modal h2 {
+
+
+    margin:15px 0 0 0;
+
+    font-size:24px;
+
+    font-weight:600;
+
+    color:#1e293b;
+
+
+}
+
+
+
+
+
+
+/* Zone boutons droite */
+
+.actions-entete {
+
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:flex-end;
+
+    gap:10px;
+
+
+}
+
+
+
+
+
+
+/* Bouton fermer */
+
+
+.bouton-fermer {
+
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:50%;
+
+    border:none;
+
+    background:#f1f5f9;
+
+    color:#475569;
+
+    font-size:24px;
+
+    line-height:38px;
+
+    cursor:pointer;
+
+    transition:0.2s;
+
+
+}
+
+
+
+.bouton-fermer:hover {
+
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+
+}
+
+
+
+
+
+
+/* Bouton ajouter */
+
+
+.bouton-ajouter {
+
+
+    height:42px;
+
+    padding:0 18px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#2563eb;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+    box-shadow:0 4px 10px rgba(37,99,235,0.25);
+
+
+}
+
+
+
+.bouton-ajouter:hover {
+
+
+    background:#1d4ed8;
+
+
+}
+
+
+
+
+
+
+/* =====================================
+   CORPS
+===================================== */
+
+
+.corps-modal {
+
+
+    flex:1;
+
+    padding:25px;
+
+    background:#f8fafc;
+
+    overflow:auto;
+
+
+}
+
+
+
+
+
+
+/* Barre filtre */
+
+.zone-filtre {
+
+
+    background:white;
+
+    padding:18px 20px;
+
+    border-radius:12px;
+
+    border:1px solid #e2e8f0;
+
+    margin-bottom:25px;
+
+
+}
+
+
+.zone-filtre label {
+
+
+    font-weight:600;
+
+    color:#334155;
+
+    margin-right:15px;
+
+
+}
+
+
+
+.zone-filtre select {
+
+
+    padding:10px 15px;
+
+    border-radius:8px;
+
+    border:1px solid #cbd5e1;
+
+    min-width:220px;
+
+
+}
+
+
+
+
+
+
+/* =====================================
+   TABLEAU
+===================================== */
+
+
+.zone-liste-frais {
+
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:12px;
+
+    border:1px solid #e2e8f0;
+
+
+}
+
+
+
+.zone-liste-frais h3 {
+
+
+    margin-top:0;
+
+    color:#1e293b;
+
+
+}
+
+
+
+
+
+.table-parametre {
+
+
+    width:100%;
+
+    border-collapse:collapse;
+
+
+}
+
+
+
+.table-parametre thead th {
+
+
+    background:#1e40af;
+
+    color:white;
+
+    padding:15px;
+
+    text-align:left;
+
+    font-weight:600;
+
+
+}
+
+
+
+.table-parametre tbody td {
+    padding:14px;
+    border-bottom:1px solid #e5e7eb;
+    color:#334155;
+}
+
+
+
+
+
+.table-parametre tbody tr:hover {
+    background:#f8fafc;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================
+   FOND MODAL SANS ASSOMBRISSEMENT
+===================================== */
+
+.fond-modal {
+
+    position: fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:10000;
+
+    background:transparent;
+
+}
+
+
+
+/* =====================================
+   PETIT MODAL AJOUT FRAIS
+===================================== */
+
+.petit-modal {
+
+
+    width:480px;
+
+
+    background:white;
+
+
+    border-radius:14px;
+
+
+    box-shadow:0 15px 40px rgba(0,0,0,0.20);
+
+
+    overflow:hidden;
+
+
+    animation:apparitionModal .25s ease;
+
+
+}
+
+
+
+@keyframes apparitionModal {
+
+
+    from {
+
+        opacity:0;
+
+        transform:translateY(-20px);
+
+    }
+
+
+    to {
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+
+
+
+
+/* =====================================
+   ENTETE
+===================================== */
+
+
+.petit-modal .entete-modal {
+
+
+    height:65px;
+
+
+    padding:0 20px;
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    justify-content:space-between;
+
+
+    border-bottom:1px solid #e5e7eb;
+
+
+}
+
+
+
+
+.petit-modal .entete-modal h2 {
+
+
+    margin:0;
+
+    font-size:20px;
+
+    color:#1e293b;
+
+
+}
+
+
+
+
+.petit-modal .bouton-fermer {
+
+
+    width:36px;
+
+    height:36px;
+
+    border-radius:50%;
+
+    border:none;
+
+    background:#f1f5f9;
+
+    color:#475569;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+
+}
+
+
+
+.petit-modal .bouton-fermer:hover {
+
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+
+}
+
+
+
+
+
+/* =====================================
+   CORPS FORMULAIRE
+===================================== */
+
+
+.corps-formulaire {
+
+
+    padding:25px;
+
+
+}
+
+
+
+
+
+.groupe-formulaire {
+
+
+    display:flex;
+
+    flex-direction:column;
+
+    margin-bottom:18px;
+
+
+}
+
+
+
+
+
+.groupe-formulaire label {
+
+
+    margin-bottom:7px;
+
+    font-weight:600;
+
+    color:#334155;
+
+
+}
+
+
+
+
+
+.groupe-formulaire input,
+.groupe-formulaire select,
+.groupe-formulaire textarea {
+
+
+    padding:11px 12px;
+
+    border-radius:8px;
+
+    border:1px solid #cbd5e1;
+
+    font-size:14px;
+
+
+}
+
+
+
+
+
+.groupe-formulaire textarea {
+
+
+    height:90px;
+
+    resize:none;
+
+
+}
+
+
+
+
+
+/* =====================================
+   ACTIONS
+===================================== */
+
+
+.actions-formulaire {
+
+
+    display:flex;
+
+
+    justify-content:flex-end;
+
+
+    gap:12px;
+
+
+    margin-top:25px;
+
+
+}
+
+
+
+
+
+.bouton-annuler {
+
+
+    padding:10px 20px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#e2e8f0;
+
+    cursor:pointer;
+
+
+}
+
+
+
+
+.bouton-enregistrer {
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+}
+
+.notification{
+    z-index: 900;
+}
+
+
+
+
+
+
+
+
+
+
+/* Conteneur général */
+#modalConfirmationSuppression {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 20000;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+/* On cache le fond derrière */
+#modalConfirmationSuppression .fond-modal {
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+/* Petite fenêtre */
+#modalConfirmationSuppression .confirmation-modal {
+
+
+    width: 380px;
+
+    background: #ffffff;
+
+    border-radius: 20px;
+
+    box-shadow:
+    0 15px 45px rgba(0,0,0,0.25);
+
+
+    overflow: hidden;
+
+    animation: apparitionConfirmation 0.25s ease;
+
+}
+
+
+
+/* Entête */
+#modalConfirmationSuppression .entete-modal {
+
+
+    background: linear-gradient(
+        135deg,
+        #ef4444,
+        #dc2626
+    );
+
+
+    color:white;
+
+    padding:20px 25px;
+
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+
+
+#modalConfirmationSuppression .entete-modal h2 {
+
+    margin:0;
+
+    font-size:20px;
+
+    font-weight:600;
+
+}
+
+
+
+/* Fermer */
+#modalConfirmationSuppression .bouton-fermer {
+
+    border:none;
+
+    background:rgba(255,255,255,0.2);
+
+    color:white;
+
+    width:32px;
+
+    height:32px;
+
+    border-radius:50%;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+}
+
+
+
+#modalConfirmationSuppression .bouton-fermer:hover {
+
+    background:rgba(255,255,255,0.35);
+
+}
+
+
+
+/* Corps */
+#modalConfirmationSuppression .corps-formulaire {
+
+    padding:30px 25px;
+
+}
+
+
+
+#modalConfirmationSuppression p {
+
+
+    margin:0 0 30px 0;
+
+    text-align:center;
+
+    color:#374151;
+
+    font-size:16px;
+
+    line-height:1.5;
+
+}
+
+
+
+/* Actions */
+#modalConfirmationSuppression .actions-formulaire {
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:15px;
+
+}
+
+
+
+/* Annuler */
+#modalConfirmationSuppression .bouton-annuler {
+
+
+    padding:12px 25px;
+
+    border-radius:12px;
+
+    border:1px solid #d1d5db;
+
+    background:#f9fafb;
+
+    color:#374151;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    transition:0.2s;
+
+}
+
+
+
+#modalConfirmationSuppression .bouton-annuler:hover {
+
+    background:#e5e7eb;
+
+}
+
+
+
+/* Supprimer */
+#modalConfirmationSuppression .bouton-supprimer {
+
+
+    padding:12px 25px;
+
+    border-radius:12px;
+
+    border:none;
+
+    background:#dc2626;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    transition:0.2s;
+
+}
+
+
+
+#modalConfirmationSuppression .bouton-supprimer:hover {
+
+    background:#b91c1c;
+
+    transform:translateY(-2px);
+
+}
+
+
+
+/* Animation */
+@keyframes apparitionConfirmation {
+
+
+    from {
+
+        opacity:0;
+
+        transform:translateY(-20px) scale(0.9);
+
+    }
+
+
+    to {
+
+        opacity:1;
+
+        transform:translateY(0) scale(1);
+
+    }
+
+}
 </style>
 
 

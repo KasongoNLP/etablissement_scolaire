@@ -47,9 +47,48 @@ function afficherEleves(){
         </div>
 
 
+<div class="box">
+    <h3>Liste des élèves</h3>
+    <table id="tableEleves">
 
-        <div class="box">
-            Liste des élèves
+        <thead>
+
+            <tr>
+
+                <th>Photo</th>
+                <th>Matricule</th>
+                <th>Nom complet</th>
+                <th>Sexe</th>
+                <th>Téléphone</th>
+                <th>Statut</th>
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <div class="recherche-eleve">
+
+    <input
+        type="text"
+        id="rechercheEleve"
+        placeholder="Chercher un élève (nom, matricule, téléphone...)">
+
+    <button
+        type="button"
+        id="btnRechercheEleve">
+        Rechercher
+    </button>
+
+</div>
+        <tbody id="listeEleves">
+
+
+
+
+        </tbody>
+
+        </table>
         </div>
 
 
@@ -544,10 +583,6 @@ function afficherEleves(){
 
 
                 </div>
-
-
-
-
             </div>
 
 
@@ -556,10 +591,52 @@ function afficherEleves(){
 
 
 
+<div class="liste-types-frais">
+
+    <div class="type-frais">
+
+        <span>Frais d'inscription</span>
+
+        <div>
+
+            <button class="btn-modifier">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+
+            <button class="btn-supprimer">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="type-frais">
+
+        <span>Scolarité</span>
+
+        <div>
+
+            <button class="btn-modifier">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+
+            <button class="btn-supprimer">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
             <button type="submit">
-
                 Enregistrer l'inscription
-
             </button>
 
 
@@ -674,7 +751,7 @@ async function chargerMatricule(){
 
             champMatricule.value =
             resultat.matricule;
-            afficherNotification(resultat.matricule);
+        
 
 
         }else{
@@ -1329,6 +1406,173 @@ async function chargerClassesPourInscription(){
 
 
 
+chargerEleves();
+
+function chargerEleves(){
+
+    const utilisateur = JSON.parse(
+        localStorage.getItem("utilisateur")
+    );
+
+    if(!utilisateur){
+
+        console.error("Utilisateur non connecté.");
+
+        return;
+
+    }
+
+    const tbody =
+    document.getElementById("listeEleves");
+
+    if(!tbody){
+
+        console.error("Le tableau listeEleves est introuvable.");
+
+        return;
+
+    }
+
+    fetch(
+
+        adresse_ip_serveur +
+        "eleves/liste?id_ecole=" +
+        utilisateur.id_ecole
+
+    )
+
+    .then(res=>{
+
+        if(!res.ok){
+
+            throw new Error(
+                "Erreur HTTP : " + res.status
+            );
+
+        }
+
+        return res.json();
+
+    })
+
+    .then(data=>{
+
+        tbody.innerHTML = "";
+
+        if(!data.success || data.eleves.length===0){
+
+            tbody.innerHTML=`
+
+                <tr>
+
+                    <td colspan="7"
+                        style="text-align:center;">
+
+                        Aucun élève trouvé.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+        let html = "";
+
+        data.eleves.forEach(eleve=>{
+
+
+        let photoEleve =
+                adresse_ip_serveur + "ecole/images/default-user.png"
+
+
+        if(
+            eleve.photo &&
+            eleve.photo !== "NULL" &&
+            eleve.photo.trim() !== ""
+        ){
+
+            photoEleve =
+            adresse_ip_serveur +
+            eleve.photo;
+
+        }
+
+
+    html += `
+
+        <tr>
+
+            <td>
+
+<img
+    src="${photoEleve}"
+    width="45"
+    height="45"
+    style="
+        border-radius:50%;
+        object-fit:cover;
+    "
+    onerror="
+        this.onerror=null;
+        this.src='${adresse_ip_serveur}interface/ecole/images/default-user.png';
+    "
+>
+
+            </td>
+
+
+            <td>${eleve.matricule}</td>
+
+
+            <td>
+                ${eleve.nom}
+                ${eleve.postnom || ""}
+                ${eleve.prenom || ""}
+            </td>
+
+
+            <td>${eleve.sexe}</td>
+
+
+            <td>${eleve.telephone || "-"}</td>
+
+
+            <td>${eleve.statut}</td>
+
+
+            <td>
+
+                <button onclick="voirEleve(${eleve.id_eleve})">
+                    Voir
+                </button>
+
+            </td>
+
+
+        </tr>
+
+    `;
+
+});
+
+        tbody.innerHTML = html;
+
+    })
+
+    .catch(err=>{
+
+        console.error(
+            "Erreur chargement élèves :",
+            err
+        );
+
+    });
+
+}
 
 
 
@@ -1337,6 +1581,44 @@ async function chargerClassesPourInscription(){
 
 
 
+
+
+
+
+document
+.getElementById("btnRechercheEleve")
+.addEventListener("click", rechercherEleve);
+
+function rechercherEleve(){
+
+    const recherche =
+    document.getElementById("rechercheEleve")
+    .value
+    .toLowerCase()
+    .trim();
+
+    const lignes =
+    document.querySelectorAll("#listeEleves tr");
+
+    lignes.forEach(ligne=>{
+
+        const texte =
+        ligne.textContent.toLowerCase();
+
+        if(texte.includes(recherche)){
+
+            ligne.style.display = "";
+
+        }
+        else{
+
+            ligne.style.display = "none";
+
+        }
+
+    });
+
+}
 
 
 
@@ -1346,6 +1628,12 @@ async function chargerClassesPourInscription(){
 chargerAnneesScolaires();
 chargerClassesPourInscription();
 }
+
+
+
+
+
+
 
 
 
@@ -2206,7 +2494,6 @@ function fermerModalNouveauPaiement(){
     .style.display = "none";
 
 }
-
 
 
 
@@ -4984,42 +5271,27 @@ function afficherParametres(){
 
 
 
-    page.innerHTML=`
+    page.innerHTML = `
 
 
-    <div class="entete-parametres">
-
-        <h1>
-            Paramètres de la plateforme
-        </h1>
-
-    </div>
+    <div class="cards-parametres">
 
 
+        <div class="card-parametre"
+             onclick="afficherGestionTypesFrais()">
 
 
-
-    <!-- CONFIGURATION GENERALE -->
-
-    <div class="boite-parametres">
+            <i class="fa-solid fa-money-bill"></i>
 
 
-        <h2>
-            Configuration générale
-        </h2>
+            <h3>
+                Types de frais
+            </h3>
 
 
-
-        <div class="groupe-parametre">
-
-            <label>
-                Nom de la plateforme
-            </label>
-
-
-            <input 
-            type="text"
-            value="School ERP">
+            <p>
+                Créer et gérer les types de frais par année scolaire.
+            </p>
 
 
         </div>
@@ -5027,17 +5299,22 @@ function afficherParametres(){
 
 
 
-        <div class="groupe-parametre">
+        <div class="card-parametre"
+             onclick="afficherConfigurationFrais()">
 
 
-            <label>
-                Email administrateur
-            </label>
+
+            <i class="fa-solid fa-sliders"></i>
 
 
-            <input 
-            type="email"
-            placeholder="admin@schoolerp.com">
+            <h3>
+                Configuration des frais
+            </h3>
+
+
+            <p>
+                Définir les montants des frais par classe et année.
+            </p>
 
 
         </div>
@@ -5045,247 +5322,441 @@ function afficherParametres(){
 
 
 
-        <button class="bouton-enregistrer-parametre">
+        <div class="card-parametre"
+             onclick="afficherReductions()">
 
-            <i class="fa-solid fa-save"></i>
 
-            Enregistrer
 
-        </button>
+            <i class="fa-solid fa-percent"></i>
+
+
+            <h3>
+                Réductions
+            </h3>
+
+
+            <p>
+                Gérer les réductions accordées aux élèves.
+            </p>
+
+
+        </div>
+
+
+
+
+        <div class="card-parametre"
+             onclick="afficherPenalites()">
+
+
+
+            <i class="fa-solid fa-clock"></i>
+
+
+            <h3>
+                Pénalités
+            </h3>
+
+
+            <p>
+                Configurer les pénalités de retard.
+            </p>
+
+
+        </div>
 
 
 
     </div>
-
-
-
-
-<!-- ===============================
-     CONFIGURATION MATRICULE ELEVE
-================================ -->
-
-<div class="boite-parametres">
-
-
-    <h2>
-        Configuration matricule élève
-    </h2>
-
-
-
-    <div class="groupe-parametre">
-
-        <label>
-            Nom de la configuration
-        </label>
-
-        <input
-            type="text"
-            id="nom_configuration_matricule"
-            placeholder="Ex: Matricule standard">
-
-    </div>
-
-
-
-
-    <div class="groupe-parametre">
-
-        <label>
-            Préfixe
-        </label>
-
-        <input
-            type="text"
-            id="prefixe_matricule"
-            value="ELV"
-            placeholder="Ex: ELV">
-
-    </div>
-
-
-
-
-
-    <div class="groupe-parametre">
-
-        <label>
-            Format du matricule
-        </label>
-
-
-        <select id="format_matricule">
-
-
-            <option value="{PREFIXE}-{SECTION}-{ANNEE}-{NUMERO}">
-
-                ELV-PRI-2026-0001
-
-            </option>
-
-
-
-            <option value="{PREFIXE}-{ANNEE}-{NUMERO}">
-
-                ELV-2026-0001
-
-            </option>
-
-
-
-            <option value="{SECTION}-{NUMERO}">
-
-                PRI-0001
-
-            </option>
-
-
-
-            <option value="{ANNEE}-{NUMERO}">
-
-                2026-0001
-
-            </option>
-
-
-        </select>
-
-
-    </div>
-
-
-
-
-
-
-    <div class="groupe-parametre">
-
-        <label>
-            Utiliser la section dans le matricule
-        </label>
-
-
-        <select id="utiliser_section">
-
-
-            <option value="1">
-                Oui
-            </option>
-
-
-            <option value="0">
-                Non
-            </option>
-
-
-        </select>
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="groupe-parametre">
-
-        <label>
-            Nombre de chiffres du numéro
-        </label>
-
-
-        <input
-            type="number"
-            id="longueur_numero"
-            value="4"
-            min="1"
-            max="10">
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="groupe-parametre">
-
-        <label>
-            Séparateur
-        </label>
-
-
-        <input
-            type="text"
-            id="separateur_matricule"
-            value="-"
-            maxlength="1">
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="groupe-parametre">
-
-        <label>
-            Exemple généré
-        </label>
-
-
-        <input
-            type="text"
-            id="exemple_matricule"
-            value="ELV-PRI-2026-0001"
-            disabled>
-
-
-    </div>
-
-
-
-
-
-
-
-    <button 
-        class="bouton-enregistrer-parametre"
-        id="btnEnregistrerMatricule">
-
-
-        <i class="fa-solid fa-save"></i>
-
-        Enregistrer configuration matricule
-
-
-    </button>
-
-
-
-</div>
-
-
-
 
 
     `;
 
 
+
     contenu.appendChild(page);
 
 
+}
 
 
 
-async function enregistrerConfigurationMatricule(){
+
+
+
+// =====================================
+// SÉLECTION DES FRAIS
+// =====================================
+function afficherGestionTypesFrais(){
+
+
+    const modal = document.createElement("div");
+    modal.id = "modalGestionTypesFrais";
+
+
+
+
+modal.innerHTML = `
+
+<div class="fond-modal">
+    <div class="fenetre-modal">
+
+
+
+        <!-- ENTETE -->
+        <div class="entete-modal">
+
+            <h2>
+                Gestion des types de frais
+            </h2>
+
+            <div class="actions-entete">
+                <button
+                    class="bouton-fermer"
+                    onclick="fermerGestionTypesFrais()">
+                    ×
+                </button>
+                <button
+                    class="bouton-ajouter"
+                    onclick="ouvrirAjoutTypeFrais()">
+                    <i class="fa-solid fa-plus"></i>
+                    Ajouter un frais
+                </button>
+
+             </div>
+            </div>
+
+
+
+
+
+
+
+        <!-- CORPS -->
+        <div class="corps-modal">
+            <!-- BARRE FILTRE -->
+            <div class="barre-filtre">
+                <div class="groupe-filtre">
+                    <label>
+                        Année scolaire :
+                    </label>
+                    <select
+                    id="filtreAnneeFrais"
+                    onchange="chargerListeTypesFrais()">
+                        <option value="">
+                            Toutes les années
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+            <!-- LISTE -->
+            <div class="zone-liste-frais">
+
+
+
+                <div class="titre-liste">
+                    <h3>
+                        Liste des frais
+                    </h3>
+
+                </div>
+
+                <table class="table-parametre">
+                    <thead>
+                        <tr>
+                            <th>
+                                Frais
+                            </th>
+
+
+                            <th>
+                                Année scolaire
+                            </th>
+
+
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+
+
+
+
+
+                    <tbody id="listeTypesFrais">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Zone des notifications -->
+<div id="notification"></div>
+`;
+
+
+    document.body.appendChild(modal);
+
+
+    
+    chargerAnneesFiltreFrais();
+    chargerListeTypesFrais();
+}
+
+
+
+//fermeture du modal..............
+function fermerGestionTypesFrais()
+{
+
+    const modal = document.getElementById(
+        "modalGestionTypesFrais"
+    );
+
+
+    if(modal){
+        modal.remove();
+    }
+}
+
+//.......................................................................................
+
+let idTypeFraisModification = null;
+
+function ouvrirAjoutTypeFrais(){
+
+    const modal = document.createElement("div");
+
+    modal.id = "modalAjoutTypeFrais";
+
+
+    modal.innerHTML = `
+
+
+    <div class="fond-modal">
+        <div class="petit-modal" id="fenetreAjoutFrais">
+            <div class="entete-modal">
+                <h2>
+                    Ajouter un type de frais
+                </h2>
+                <button
+                class="bouton-fermer"
+                onclick="fermerAjoutTypeFrais()">
+                ×
+                </button>
+            </div>
+
+        <div class="corps-formulaire">
+
+        <div class="groupe-formulaire">
+
+            <label>
+                Année scolaire
+            </label>
+
+
+            <select id="anneeTypeFrais" disabled>
+
+                <option value="">
+                    Chargement...
+                </option>
+
+            </select>
+
+
+        </div>
+
+
+            <div class="groupe-formulaire">
+
+                <label>
+                    Nom du frais
+                </label>
+
+
+                <input
+                type="text"
+                id="nomTypeFrais"
+                placeholder="Ex : Frais d'inscription">
+
+            </div>
+
+
+            <div class="groupe-formulaire">
+
+                <label>
+                    Description
+                </label>
+
+
+                <textarea
+                id="descriptionTypeFrais"
+                placeholder="Description du frais">
+                </textarea>
+
+
+            </div>
+
+
+
+            <div class="actions-formulaire">
+
+                <button
+                class="bouton-annuler"
+                onclick="fermerAjoutTypeFrais()">
+                    Annuler
+                </button>
+
+
+                <button
+                class="bouton-enregistrer"
+                onclick="enregistrerTypeFrais()">
+                    Enregistrer
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+    <div id="notification"></div>
+`;
+
+
+document.body.appendChild(modal);
+
+chargerAnneeActiveFrais();
+
+rendreFenetreFraisMouvable();
+
+}
+
+
+//......................................................................................@|
+function fermerAjoutTypeFrais()
+{
+
+    const modal = document.getElementById(
+        "modalAjoutTypeFrais"
+    );
+
+    if(modal)
+    {
+        modal.remove();
+    }
+
+}
+//......................................................................................@|
+function rendreFenetreFraisMouvable(){
+
+
+    const fenetre = document.getElementById(
+        "fenetreAjoutFrais"
+    );
+
+
+    const entete = fenetre.querySelector(
+        ".entete-modal"
+    );
+
+
+    let deplacement = false;
+
+
+    let decalageX = 0;
+    let decalageY = 0;
+
+
+
+
+    entete.style.cursor = "move";
+
+    entete.style.userSelect = "none";
+
+
+
+
+
+    entete.addEventListener(
+        "mousedown",
+        function(e){
+
+
+            deplacement = true;
+
+
+            const rect = fenetre.getBoundingClientRect();
+
+
+            decalageX = e.clientX - rect.left;
+
+            decalageY = e.clientY - rect.top;
+
+
+
+            fenetre.style.position = "fixed";
+
+
+        }
+    );
+
+
+
+
+
+
+
+    document.addEventListener(
+        "mousemove",
+        function(e){
+
+
+            if(!deplacement)
+                return;
+
+
+
+            fenetre.style.left =
+            (e.clientX - decalageX) + "px";
+
+
+
+            fenetre.style.top =
+            (e.clientY - decalageY) + "px";
+        }
+    );
+
+    document.addEventListener(
+        "mouseup",
+        function(){
+            deplacement = false;
+        }
+    );
+}
+//......................................................................................@|
+function chargerAnneesFiltreFrais(){
+    const select = document.getElementById(
+        "filtreAnneeFrais"
+    );
+    if(!select){
+        return;
+    }
+
 
 
     const utilisateur = JSON.parse(
@@ -5294,139 +5765,539 @@ async function enregistrerConfigurationMatricule(){
 
 
     if(!utilisateur){
-
         console.error(
-            "Utilisateur non connecté"
+            "Utilisateur non trouvé"
         );
 
         return;
-
     }
 
 
 
-    const data = {
+    const id_ecole = utilisateur.id_ecole;
+
+    fetch(
+        adresse_ip_serveur +
+        "annees-scolaires/liste?id_ecole=" +
+        id_ecole
+    )
+    .then(response => response.json())
+    .then(data => {
+        select.innerHTML = `
+            <option value="">
+                Toutes les années
+            </option>
+        `;
+        data.forEach(annee => {
+            const option = document.createElement(
+                "option"
+            );
+            option.value = annee.id_annee;
+            option.textContent = annee.libelle;
+            select.appendChild(option);
+        });
+    })
 
 
-        id_ecole: utilisateur.id_ecole,
+    .catch(error => {
+        console.error(
+            "Erreur chargement années : ",
+            error
+        );
+    });
+}
+//fonction charger année actives........................................................@|
 
 
-        nom_configuration:
-        document.getElementById(
-            "nom_configuration_matricule"
-        ).value,
+//......................................................................................@|
+function chargerListeTypesFrais(){
+    const tableau = document.getElementById(
+        "listeTypesFrais"
+    );
 
+    if(!tableau){
+        return;
+    }
 
+    const utilisateur = JSON.parse(
+        localStorage.getItem("utilisateur")
+    );
 
-        prefixe:
-        document.getElementById(
-            "prefixe_matricule"
-        ).value,
-
-
-
-        format_matricule:
-        document.getElementById(
-            "format_matricule"
-        ).value,
-
-
-
-        utiliser_section:
-        document.getElementById(
-            "utiliser_section"
-        ).value,
-
-
-
-        longueur_numero:
-        document.getElementById(
-            "longueur_numero"
-        ).value,
-
-
-
-        separateur:
-        document.getElementById(
-            "separateur_matricule"
-        ).value
-
-
-    };
-
-
-
-
-    try{
-
-
-        const response = await fetch(
-
-            `${adresse_ip_serveur}configuration_matricule/ajouter`,
-
-            {
-
-                method:"POST",
-
-                headers:{
-                    "Content-Type":"application/json"
-                },
-
-
-                body:JSON.stringify(data)
-
-            }
-
+    if(!utilisateur){
+        console.error(
+            "Utilisateur non trouvé"
         );
 
-
-
-        const resultat =
-        await response.json();
-
+        return;
+    }
 
 
 
-        if(resultat.success){
+    const id_ecole = utilisateur.id_ecole;
+    const select = document.getElementById(
+        "filtreAnneeFrais"
+    );
 
 
-            alert(
-                "Configuration matricule enregistrée"
-            );
+    const id_annee = select.value;
+    let url =
+    adresse_ip_serveur +
+    "types-frais/liste?id_ecole=" +
+    id_ecole;
 
 
 
-        }else{
+    // si une année est choisie
+    if(id_annee){
+        url +=
+        "&id_annee=" +
+        id_annee;
+
+    }
 
 
-            alert(
-                resultat.message
-            );
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        tableau.innerHTML = "";
 
-
+        if(data.length === 0){
+            tableau.innerHTML = `
+            <tr>
+                <td colspan="4"
+                style="text-align:center">
+                    Aucun frais trouvé
+                </td>
+            </tr>
+            `;
+            return;
         }
 
 
 
 
-    }catch(error){
+        data.forEach(frais => {
+            tableau.innerHTML += `
+            <tr>
+                <td>
+                    ${frais.nom}
+                </td>
+                <td>
+                    ${frais.libelle}
+                </td>
+                <td>
+                    ${frais.description ?? ""}
+                </td>
+                <td>
+                    <button
+                    class="bouton-modifier"
+                    onclick="modifierTypeFrais(${frais.id_type_frais})">
+                        ✏
+                    </button>
+                    <button
+                    class="bouton-supprimer"
+                    onclick="supprimerTypeFrais(${frais.id_type_frais})">
 
-
+                        🗑
+                    </button>
+                </td>
+            </tr>
+            `;
+        });
+    })
+    .catch(error => {
         console.error(
-            "Erreur enregistrement configuration matricule :",
+            "Erreur chargement frais :",
             error
         );
+    });
+}
+//......................................................................................@|
+//fonction modifiée le frais 
+//........................................................................................
+function modifierTypeFrais(id_type_frais){
+
+    ouvrirAjoutTypeFrais();
+    fetch(
+        adresse_ip_serveur +
+        "types-frais-liste/" +
+        id_type_frais
+    )
+
+    .then(res => res.json())
+
+    .then(data => {
 
 
+    
+
+    if(!data.success){
+        afficherNotification(data.message);
+        console.log(data.message);
+        return;
+    }
+
+    
+
+        // Remplissage du formulaire
+        document.getElementById("nomTypeFrais").value =
+        data.type.nom;
+
+        document.getElementById("descriptionTypeFrais").value =
+        data.type.description || "";
+
+        document.getElementById("anneeTypeFrais").value =
+        data.type.id_annee;
+
+        // Mémoriser l'id à modifier
+        idTypeFraisModification =
+        data.type.id_type_frais;
+
+        // Changer le texte du bouton
+        document.querySelector(".bouton-enregistrer").textContent =
+        "Modifier";
+
+        // Facultatif : changer le titre du modal
+        document.querySelector(".entete-modal h2").textContent =
+        "Modifier un type de frais";
+
+    })
+
+    .catch(err => {
+        console.error(err);
+        console.error(
+            "Impossible de charger le type de frais."
+        );
+    });
+}
+
+function modifierTypeFraisEnregistrer(){
+
+    const nom = document.getElementById(
+        "nomTypeFrais"
+    ).value.trim();
+
+
+    const description = document.getElementById(
+        "descriptionTypeFrais"
+    ).value.trim();
+
+
+    const id_annee = document.getElementById(
+        "anneeTypeFrais"
+    ).value;
+
+
+
+    if(!nom){
+
+        afficherNotification(
+            "Veuillez saisir le nom du frais."
+        );
+
+        return;
     }
 
 
 
-}
+    fetch(
+        adresse_ip_serveur +
+        "types-frais/" +
+        idTypeFraisModification,
+        {
+            method:"PUT",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                nom: nom,
+                description: description,
+                id_annee: id_annee
+
+            })
+        }
+    )
+
+    .then(response => {
+
+        if(!response.ok){
+
+            throw new Error(
+                "Erreur serveur"
+            );
+
+        }
+
+        return response.json();
+
+    })
+
+
+    .then(resultat => {
+
+
+        if(resultat.success){
+
+
+            afficherNotification(
+                "Type de frais modifié avec succès."
+            );
+
+
+            idTypeFraisModification = null;
+
+
+            fermerAjoutTypeFrais();
+
+
+            chargerListeTypesFrais();
+
+
+        }else{
+            afficherNotification(
+                resultat.message
+            );
+        }
+    })
+    .catch(error => {
+        console.error(
+            "Erreur modification :",
+            error
+        );
+        afficherNotification(
+            "Impossible de modifier le type de frais."
+        );
+
+    });
 
 }
 
 
+function chargerAnneeActiveFrais(){
+
+    const utilisateur = JSON.parse(
+        localStorage.getItem("utilisateur")
+    );
+
+    if(!utilisateur){
+        return;
+    }
+
+    const id_ecole = utilisateur.id_ecole;
+
+    const select = document.getElementById("anneeTypeFrais");
+
+    if(!select){
+        return;
+    }
+
+    fetch(
+        adresse_ip_serveur +
+        "annees-scolaires/active?id_ecole=" +
+        id_ecole
+    )
+
+    .then(response => {
+
+        if(!response.ok){
+            throw new Error(
+                "Aucune année scolaire active."
+            );
+        }
+
+        return response.json();
+
+    })
+
+    .then(annee => {
+
+        select.innerHTML = `
+            <option value="${annee.id_annee}">
+                ${annee.libelle}
+            </option>
+        `;
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        select.innerHTML = `
+            <option value="">
+                Aucune année active
+            </option>
+        `;
+    });
+}
+
+
+//......................................................................................@|
+function enregistrerTypeFrais(){
+
+    const utilisateur = JSON.parse(
+        localStorage.getItem("utilisateur")
+    );
+
+    if(!utilisateur){
+        afficherNotification("Utilisateur non connecté");
+        return;
+    }
+
+
+    // Si on est en modification
+    if(idTypeFraisModification !== null){
+
+        modifierTypeFraisEnregistrer();
+
+        return;
+    }
+
+
+
+    const id_ecole = utilisateur.id_ecole;
+
+    const id_annee = document.getElementById(
+        "anneeTypeFrais"
+    ).value;
+
+    const nom = document.getElementById(
+        "nomTypeFrais"
+    ).value.trim();
+
+    const description = document.getElementById(
+        "descriptionTypeFrais"
+    ).value.trim();
+
+
+    if(!id_annee){
+        afficherNotification(
+            "L'année scolaire active est introuvable."
+        );
+        return;
+    }
+
+
+    if(!nom){
+        afficherNotification(
+            "Veuillez saisir le nom du frais."
+        );
+        return;
+    }
+
+
+
+    fetch(
+        adresse_ip_serveur + "types-frais/ajouter",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id_ecole,
+                id_annee,
+                nom,
+                description,
+                actif: 1
+            })
+        }
+    )
+
+    .then(response => {
+
+        if(!response.ok){
+            throw new Error("Erreur du serveur.");
+        }
+
+        return response.json();
+
+    })
+
+    .then(resultat => {
+
+        if(resultat.success){
+
+            fermerAjoutTypeFrais();
+            chargerListeTypesFrais();
+
+        }else{
+
+            afficherNotification(
+                resultat.message
+            );
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        afficherNotification(
+            "Impossible d'enregistrer le type de frais."
+        );
+
+    });
+
+}
+//......................................................................................@|
+function supprimerTypeFrais(id_type_frais){
+
+    afficherConfirmationSuppression(id_type_frais);
+    if(!confirmation){
+        return;
+    }
+
+
+    fetch(
+        adresse_ip_serveur +
+        "types-frais-supprime/" +
+        id_type_frais,
+        {
+            method:"DELETE"
+        }
+    )
+
+
+    .then(response=>{
+
+        if(!response.ok){
+            throw new Error(
+                "Erreur serveur"
+            );
+        }
+        return response.json();
+    })
+    .then(resultat=>{
+        if(resultat.success){
+            afficherNotification(
+                "Type de frais supprimé avec succès."
+            );
+            chargerListeTypesFrais();
+        }else{
+            afficherNotification(
+                resultat.message
+            );
+        }
+    })
+
+
+    .catch(error=>{
+        console.error(
+            "Erreur suppression :",
+            error
+        );
+
+        afficherNotification(
+            "Impossible de supprimer le type de frais."
+        );
+    });
+}
 
 
 
@@ -5434,19 +6305,11 @@ async function enregistrerConfigurationMatricule(){
 
 
 
+//......................................................................................
 
-
-
-
-
-
-
-
-
-
-// =====================================
+// ====================================================================================
 // MENU DASHBOARD
-// =====================================
+// ====================================================================================
 
 document
 .getElementById("menuDashboard")
@@ -5515,9 +6378,9 @@ function afficherDashboard(){
             </div>
 
 
-            <div class="value">
+            <div class="value" id="nombreEleves">
 
-                1458
+                0
 
             </div>
 
@@ -5903,4 +6766,156 @@ const id_ecole = utilisateur.id_ecole;
             err
         );
     });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+function afficherConfirmationSuppression(id_type_frais){
+
+
+    const modal = document.createElement("div");
+
+    modal.id = "modalConfirmationSuppression";
+
+
+    modal.innerHTML = `
+
+    <div class="fond-modal">
+
+        <div class="petit-modal confirmation-modal">
+
+
+            <div class="entete-modal">
+
+                <h2>
+                    Confirmation
+                </h2>
+
+                <button
+                class="bouton-fermer"
+                onclick="fermerConfirmationSuppression()">
+                    ×
+                </button>
+
+            </div>
+
+
+
+            <div class="corps-formulaire">
+
+                <p style="text-align:center;">
+                    Voulez-vous vraiment supprimer ce type de frais ?
+                </p>
+
+
+                <div class="actions-formulaire">
+
+
+                    <button
+                    class="bouton-annuler"
+                    onclick="fermerConfirmationSuppression()">
+                        Annuler
+                    </button>
+
+
+
+                    <button
+                    class="bouton-supprimer"
+                    onclick="confirmerSuppressionTypeFrais(${id_type_frais})">
+                        Supprimer
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+    `;
+
+
+    document.body.appendChild(modal);
+
+}
+
+
+function fermerConfirmationSuppression(){
+    const modal =
+    document.getElementById(
+        "modalConfirmationSuppression"
+    );
+    if(modal){
+        modal.remove();
+
+    }
+
+}
+
+
+function confirmerSuppressionTypeFrais(id_type_frais){
+
+    fetch(
+        adresse_ip_serveur +
+        "types-frais-supprime/" +
+        id_type_frais,
+        {
+            method:"DELETE"
+        }
+    )
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+
+        if(data.success){
+
+
+            afficherNotification(
+                "Type de frais supprimé avec succès."
+            );
+
+
+            fermerConfirmationSuppression();
+
+
+            chargerListeTypesFrais();
+
+
+        }else{
+
+            afficherNotification(
+                data.message
+            );
+
+        }
+
+
+    })
+
+    .catch(err=>{
+
+        console.error(err);
+
+        afficherNotification(
+            "Erreur suppression."
+        );
+
+    });
+
 }

@@ -43,6 +43,12 @@ if (!fs.existsSync(DOSSIER_PHOTOS)) {
 
 }
 
+app.use(
+    "/uploads",
+    express.static(
+        path.join(__dirname, "../uploads")
+    )
+);
 
 
 const stockage = multer.diskStorage({
@@ -3252,30 +3258,78 @@ app.get(
 
 
 
+//retourn eleve
+// =====================================
+// LISTE DES ELEVES
+// =====================================
 
+app.get(
+"/eleves/liste",
+(req,res)=>{
 
+    const id_ecole = req.query.id_ecole;
 
+    if(!id_ecole){
 
+        return res.status(400).json({
 
+            success:false,
+            message:"id_ecole est obligatoire"
 
+        });
 
+    }
 
 
+    db.query(
 
+        `
+        SELECT
+            id_eleve,
+            matricule,
+            nom,
+            postnom,
+            prenom,
+            sexe,
+            date_naissance,
+            lieu_naissance,
+            nationalite,
+            telephone,
+            photo,
+            statut
+        FROM eleves
+        WHERE id_ecole = ?
+        ORDER BY nom ASC, postnom ASC
+        `,
 
+        [id_ecole],
 
+        (err,result)=>{
 
+            if(err){
 
+                return res.status(500).json({
 
+                    success:false,
+                    message:err.message
 
+                });
 
+            }
 
 
+            res.json({
 
+                success:true,
+                eleves:result
 
+            });
 
+        }
 
+    );
 
+});
 
 
 
@@ -3291,17 +3345,42 @@ app.get(
 
 
 
+// partie gestion frais
+app.get("/annees-scolaires/liste", (req,res)=>{
 
 
+    const id_ecole = req.query.id_ecole;
 
 
+    const sql = `
 
+        SELECT 
+            id_annee,
+            libelle
 
+        FROM annees_scolaires
 
+        WHERE id_ecole = ?
 
+        ORDER BY date_debut DESC
 
+    `;
 
 
+    db.query(
+        sql,
+        [id_ecole],
+        (err,result)=>{
+            if(err){
+                console.log(err);
+                return res.status(500).json({
+                    message:"Erreur SQL"
+                });
+            }
+            res.json(result);
+        }
+    );
+});
 
 
 
@@ -3310,20 +3389,432 @@ app.get(
 
 
 
+// afficher les frais
+app.get("/types-frais/liste", (req,res)=>{
+    const id_ecole = req.query.id_ecole;
+    const id_annee = req.query.id_annee;
 
+    let sql = `
+    SELECT 
+        tf.id_type_frais,
+        tf.nom,
+        tf.description,
+        tf.actif,
+        a.libelle
 
+    FROM types_frais tf
 
+    INNER JOIN annees_scolaires a
+    ON tf.id_annee = a.id_annee
 
+    WHERE tf.id_ecole = ?
 
+    `;
 
 
+    let params=[
+        id_ecole
+    ];
 
 
 
+    if(id_annee){
+        sql += `
+        AND tf.id_annee = ?
+        `;
+        params.push(id_annee);
+    }
 
+    db.query(
+        sql,
+        params,
+        (err,result)=>{
+            if(err){
+                console.log(err);
+                return res.status(500).json({
+                    erreur:"Erreur SQL"
+                });
+            }
+            res.json(result);
+        }
+    );
+});
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+//route pour selectionné une année active pour la reatio du frai
+app.get("/annees-scolaires/active", (req, res) => {
+
+    const id_ecole = req.query.id_ecole;
+
+    const sql = `
+        SELECT
+            id_annee,
+            libelle
+        FROM annees_scolaires
+        WHERE id_ecole = ?
+        AND statut = 'Active'
+        LIMIT 1
+    `;
+
+    db.query(sql, [id_ecole], (err, result) => {
+
+        if(err){
+            console.log(err);
+
+            return res.status(500).json({
+                message: "Erreur SQL"
+            });
+        }
+
+        if(result.length === 0){
+
+            return res.status(404).json({
+                message: "Aucune année scolaire active."
+            });
+
+        }
+
+        res.json(result[0]);
+
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// route pour ajouter un frais 
+// =====================================
+// AJOUT D'UN TYPE DE FRAIS
+// =====================================
+app.post("/types-frais/ajouter", (req, res) => {
+
+    const {
+        id_ecole,
+        id_annee,
+        nom,
+        description,
+        actif
+    } = req.body;
+
+
+    if(!id_ecole || !id_annee || !nom){
+
+        return res.json({
+            success: false,
+            message: "Veuillez remplir tous les champs obligatoires."
+        });
+
+    }
+
+
+    // Vérifier si le frais existe déjà
+    const sqlVerification = `
+
+        SELECT id_type_frais
+
+        FROM types_frais
+
+        WHERE id_ecole = ?
+        AND id_annee = ?
+        AND nom = ?
+
+    `;
+
+
+    db.query(
+        sqlVerification,
+        [
+            id_ecole,
+            id_annee,
+            nom
+        ],
+        (err, resultat) => {
+
+            if(err){
+
+                console.log(err);
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Erreur lors de la vérification."
+                });
+
+            }
+
+
+            if(resultat.length > 0){
+
+                return res.json({
+                    success: false,
+                    message: "Ce type de frais existe déjà pour cette année scolaire."
+                });
+
+            }
+
+
+            // Insertion
+            const sqlInsertion = `
+
+                INSERT INTO types_frais
+                (
+                    id_ecole,
+                    id_annee,
+                    nom,
+                    description,
+                    actif
+                )
+
+                VALUES (?, ?, ?, ?, ?)
+
+            `;
+
+
+            db.query(
+                sqlInsertion,
+                [
+                    id_ecole,
+                    id_annee,
+                    nom,
+                    description,
+                    actif
+                ],
+                (err, resultatInsertion) => {
+
+                    if(err){
+
+                        console.log(err);
+
+                        return res.status(500).json({
+                            success: false,
+                            message: "Erreur lors de l'enregistrement."
+                        });
+
+                    }
+
+
+                    res.json({
+                        success: true,
+                        message: "Type de frais ajouté avec succès.",
+                        id_type_frais: resultatInsertion.insertId
+                    });
+
+                }
+            );
+
+        }
+    );
+
+});
+
+
+
+//charge les frais pour les modifier 
+app.get("/types-frais-liste/:id", (req, res) => {
+
+    const id_type_frais = req.params.id;
+
+    db.query(
+
+        `
+        SELECT
+            tf.id_type_frais,
+            tf.nom,
+            tf.description,
+            tf.id_annee,
+            a.libelle
+        FROM types_frais tf
+
+        INNER JOIN annees_scolaires a
+            ON tf.id_annee = a.id_annee
+
+        WHERE tf.id_type_frais = ?
+        `,
+
+        [id_type_frais],
+
+        (err, result) => {
+
+            if(err){
+
+                return res.json({
+
+                    success:false,
+                    message:err.message
+
+                });
+
+            }
+
+            if(result.length === 0){
+
+                return res.json({
+
+                    success:false,
+                    message:"Type de frais introuvable."
+
+                });
+
+            }
+
+            res.json({
+
+                success:true,
+                type:result[0]
+
+            });
+
+        }
+
+    );
+
+});
+
+
+
+
+
+app.put("/types-frais/:id", (req, res) => {
+
+    const id_type_frais = req.params.id;
+
+    const {
+        nom,
+        description,
+        id_annee
+    } = req.body;
+
+
+    db.query(
+        `
+        UPDATE types_frais
+        SET 
+            nom = ?,
+            description = ?,
+            id_annee = ?
+        WHERE id_type_frais = ?
+        `,
+        [
+            nom,
+            description,
+            id_annee,
+            id_type_frais
+        ],
+
+        (err, resultat) => {
+
+            if(err){
+
+                console.error(err);
+
+                return res.json({
+                    success:false,
+                    message:"Erreur lors de la modification."
+                });
+
+            }
+
+
+            res.json({
+                success:true,
+                message:"Type de frais modifié."
+            });
+
+        }
+    );
+
+});
+
+
+
+app.delete("/types-frais-supprime/:id", (req, res) => {
+
+    const id_type_frais = req.params.id;
+
+
+    db.query(
+
+        `
+        DELETE FROM types_frais
+        WHERE id_type_frais = ?
+        `,
+
+        [
+            id_type_frais
+        ],
+
+        (err, resultat) => {
+
+
+            if(err){
+
+                console.error(
+                    "Erreur suppression type frais :",
+                    err
+                );
+
+
+                return res.json({
+
+                    success:false,
+                    message:"Erreur lors de la suppression."
+
+                });
+
+            }
+
+
+
+            if(resultat.affectedRows === 0){
+
+                return res.json({
+
+                    success:false,
+                    message:"Type de frais introuvable."
+
+                });
+
+            }
+
+
+
+            res.json({
+
+                success:true,
+                message:"Type de frais supprimé avec succès."
+
+            });
+
+
+        }
+
+    );
+
+
+});
 
 
 

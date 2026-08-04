@@ -365,34 +365,38 @@ VALUES
 
 
 
-CREATE TABLE paiements (
+
+
+
+
+/*''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''*/
+CREATE TABLE paiements(
     id_paiement INT AUTO_INCREMENT PRIMARY KEY,
     id_ecole INT NOT NULL,
     id_eleve INT NOT NULL,
+    id_eleve_frais INT NOT NULL,
     id_utilisateur INT NOT NULL,
+    numero_recu VARCHAR(50) UNIQUE,
     montant DECIMAL(10,2) NOT NULL,
-
     devise ENUM(
         'USD',
         'CDF'
-    ) NOT NULL,
 
+    ) NOT NULL,
     mode_paiement ENUM(
         'Espece',
         'Banque',
         'Mobile Money'
+
     ) DEFAULT 'Espece',
-
-    date_paiement DATETIME DEFAULT CURRENT_TIMESTAMP,
     observation TEXT,
-
-
+    date_paiement DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(id_ecole)
     REFERENCES ecoles(id_ecole),
-
     FOREIGN KEY(id_eleve)
     REFERENCES eleves(id_eleve),
-
+    FOREIGN KEY(id_eleve_frais)
+    REFERENCES eleve_frais(id_eleve_frais),
     FOREIGN KEY(id_utilisateur)
     REFERENCES utilisateurs(id_utilisateur)
 
@@ -401,36 +405,156 @@ CREATE TABLE paiements (
 
 
 
-
-
-
-INSERT INTO utilisateurs
-(
-    id_ecole,
-    nom,
-    postnom,
-    prenom,
-    email,
-    telephone,
-    mot_de_passe,
-    role,
-    statut
-)
-VALUES
-(
-    NULL,
-    'Kasongo',
-    'Mutombo',
-    'Steve',
-    'admin@schoolerp.com',
-    '+243970000000',
-    '123456',
-    'SUPER_ADMIN',
-    'Actif'
+CREATE TABLE types_frais(
+    id_type_frais INT AUTO_INCREMENT PRIMARY KEY,
+    id_ecole INT NOT NULL,
+    nom VARCHAR(100) NOT NULL,
+    description TEXT,
+    actif BOOLEAN DEFAULT TRUE,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(id_ecole)
+    REFERENCES ecoles(id_ecole)
 );
 
 
-INSERT INTO annees_scolaires
+
+CREATE TABLE configuration_frais(
+    id_configuration INT AUTO_INCREMENT PRIMARY KEY,
+    id_ecole INT NOT NULL,
+    id_type_frais INT NOT NULL,
+    id_classe INT NOT NULL,
+    id_annee_scolaire INT NOT NULL,
+    montant DECIMAL(10,2) NOT NULL,
+    devise ENUM('USD','CDF') NOT NULL,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY(id_ecole)
+    REFERENCES ecoles(id_ecole),
+
+    FOREIGN KEY(id_type_frais)
+    REFERENCES types_frais(id_type_frais),
+
+    FOREIGN KEY(id_classe)
+    REFERENCES classes(id_classe),
+
+    FOREIGN KEY(id_annee_scolaire)
+    REFERENCES annees_scolaires(id_annee_scolaire)
+
+);
+
+
+
+
+
+
+
+
+CREATE TABLE eleve_frais(
+    id_eleve_frais INT AUTO_INCREMENT PRIMARY KEY,
+
+    id_eleve INT NOT NULL,
+    id_configuration INT NOT NULL,
+    montant DECIMAL(10,2) NOT NULL,
+    reduction DECIMAL(10,2) DEFAULT 0,
+    penalite DECIMAL(10,2) DEFAULT 0,
+    montant_paye DECIMAL(10,2) DEFAULT 0,
+    montant_restant DECIMAL(10,2) NOT NULL,
+    statut ENUM(
+        'Non payé',
+        'Partiel',
+        'Payé'
+    ) DEFAULT 'Non payé',
+
+
+
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(id_eleve)
+    REFERENCES eleves(id_eleve),
+
+    FOREIGN KEY(id_configuration)
+    REFERENCES configuration_frais(id_configuration)
+
+);
+
+
+
+
+
+
+
+
+CREATE TABLE reductions(
+    id_reduction INT AUTO_INCREMENT PRIMARY KEY,
+
+    id_ecole INT NOT NULL,
+    nom VARCHAR(100),
+    type ENUM(
+        'Montant',
+        'Pourcentage'
+    ),
+
+    valeur DECIMAL(10,2),
+    actif BOOLEAN DEFAULT TRUE,
+
+    FOREIGN KEY(id_ecole)
+    REFERENCES ecoles(id_ecole)
+);
+
+
+
+CREATE TABLE penalites(
+
+    id_penalite INT AUTO_INCREMENT PRIMARY KEY,
+
+    id_ecole INT NOT NULL,
+
+    nom VARCHAR(100),
+
+    type ENUM(
+
+        'Montant',
+        'Pourcentage'
+
+    ),
+
+    valeur DECIMAL(10,2),
+    actif BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY(id_ecole)
+    REFERENCES ecoles(id_ecole)
+
+);
+
+
+
+CREATE TABLE recus(
+    id_recu INT AUTO_INCREMENT PRIMARY KEY,
+    id_paiement INT NOT NULL,
+    numero_recu VARCHAR(50) UNIQUE,
+    type ENUM(
+
+        'Original',
+        'Duplicata'
+
+    ) DEFAULT 'Original',
+
+    date_impression DATETIME DEFAULT CURRENT_TIMESTAMP,
+    imprime_par INT,
+
+    FOREIGN KEY(id_paiement)
+    REFERENCES paiements(id_paiement),
+
+    FOREIGN KEY(imprime_par)
+    REFERENCES utilisateurs(id_utilisateur)
+
+);
+
+/*''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''*/
+
+
+
+
+
+iNSERT INTO annees_scolaires
 (
     id_ecole,
     libelle,
@@ -487,3 +611,28 @@ CREATE TABLE configuration_matricules (
     ON DELETE CASCADE
 
 );
+
+
+
+docker exec -i ecole_mariadb mariadb -u root etablissement_scolaire < ./db/etablissement_scolaire.sql
+docker exec -it ecole_mariadb mariadb -u root
+
+
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+
+
+/*verification de la base de donnée*/
+docker exec -it ecole_mariadb mariadb -u root
+
+
+/*exporter la base de donné*/
+mysqldump -u root -p etablissement_scolaire > etablissement_scolaire.sql
+
+
+/*.....................................................................................................................*/
+/* Creation de la base de donnée avant import */
+CREATE DATABASE etablissement_scolaire;
+EXIT;
+docker exec -i ecole_mariadb mariadb -u root etablissement_scolaire < ~/work/etablissement_scolaire/db/etablissement_scolaire.sql
